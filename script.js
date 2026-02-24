@@ -1,7 +1,7 @@
 /* CONSOLIDATED RPG SCRIPT SYSTEM - REVISED */
 
 const CONFIG = {
-    csvUrl: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTfX6o_W1y8q6v_r1R_S1p_S1p_S1p_S1p_S1p_S1p_S1p_S1p_S1p_S1p_S1p/pub?output=csv',
+    csvUrl: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTIz5r4BkhocZryD6Ju2UGYVWyEKXAvhhqS94Hm6-yMyegyjQM-MV6j0-mDnujDN72oLjPNCyfBlUsZ/pub?output=csv',
     categories: ['Character', 'Monster', 'Pet', 'Item', 'Magic', 'Area']
 };
 
