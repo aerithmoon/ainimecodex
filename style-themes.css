@@ -54,6 +54,8 @@ body, .page, .rpg-header, .unit-card, .cat-card, .rpg-box, .modal-content {
 [data-theme="light"] .rpg-box {
     background: #ffffff;
     border: 1px solid rgba(0, 0, 0, 0.1);
+    border-top: 3px solid var(--accent-clr);
+    border-radius: 14px;
     box-shadow: 0 4px 15px rgba(0,0,0,0.05);
 }
 

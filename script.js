@@ -567,33 +567,16 @@ function renderArchive() {
         </div>
     `).join('');
 
-    /* REVISI: Auto-toggle scrolling for page-2: disable scroll when content is small.
-       This checks grid height vs container height and adds .no-scroll to #page-2 when content fits. */
+    /* REVISI: Selalu aktifkan scroll page-2 agar bisa scroll ketika data banyak */
     (function adjustPage2Scroll() {
         try {
             const page2 = document.getElementById('page-2');
             if (!page2) return;
-            const container = page2.querySelector('.page-container') || page2;
-            // small delay to allow images/layout to settle
-            const doCheck = () => {
-                const gridHeight = grid.scrollHeight || grid.offsetHeight || 0;
-                const containerHeight = (container.clientHeight || container.offsetHeight || page2.clientHeight || 0);
-                const threshold = 80; // leave some room (headers)
-                if (gridHeight > containerHeight - threshold) {
-                    page2.classList.remove('no-scroll');
-                } else {
-                    page2.classList.add('no-scroll');
-                }
-            };
-            setTimeout(doCheck, 80);
-            // re-run when images finish loading (in case layout changes)
-            Array.from(grid.querySelectorAll('img')).forEach(img => {
-                if (img.complete) return; // already loaded
-                img.onload = () => setTimeout(doCheck, 80);
-                img.onerror = () => setTimeout(doCheck, 80);
-            });
+            // Selalu hapus no-scroll agar page-2 bisa di-scroll
+            page2.classList.remove('no-scroll');
+            page2.style.overflowY = 'auto';
         } catch (e) {
-            // silent - keep original behavior if something unexpected
+            // silent
         }
     })();
 }
