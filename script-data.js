@@ -3,7 +3,7 @@
 const CONFIG = {
     // Replace with your CSV URL
     csvUrl: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTIz5r4BkhocZryD6Ju2UGYVWyEKXAvhhqS94Hm6-yMyegyjQM-MV6j0-mDnujDN72oLjPNCyfBlUsZ/pub?output=csv',
-    categories: ['Character', 'Monster', 'Pet', 'Item', 'Magic']
+    categories: ['Character', 'Monster', 'Pet', 'Item', 'Magic', 'Area']
 };
 
 let rawData = [];
@@ -26,13 +26,29 @@ async function loadRealmData() {
 }
 
 function parseCSV(csv) {
-    const lines = csv.split('\n');
+    const lines = csv.split('\n').filter(l => l.trim().length > 0);
+    if (lines.length === 0) return [];
     const headers = lines[0].split(',').map(h => h.trim().toLowerCase().replace(/ /g, '_'));
     return lines.slice(1).map(line => {
-        const values = line.split(',').map(v => v.trim());
+        // Handle koma di dalam tanda kutip (misal: story/tags yang mengandung koma)
+        const values = [];
+        let current = '';
+        let inQuotes = false;
+        for (let i = 0; i < line.length; i++) {
+            const char = line[i];
+            if (char === '"') {
+                inQuotes = !inQuotes;
+            } else if (char === ',' && !inQuotes) {
+                values.push(current.trim());
+                current = '';
+            } else {
+                current += char;
+            }
+        }
+        values.push(current.trim()); // push nilai kolom terakhir
         const obj = {};
         headers.forEach((header, i) => {
-            obj[header] = values[i];
+            obj[header] = values[i] || '';
         });
         return obj;
     });
