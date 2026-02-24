@@ -1,7 +1,7 @@
 /* CONSOLIDATED RPG SCRIPT SYSTEM - REVISED */
 
 const CONFIG = {
-    csvUrl: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTIz5r4BkhocZryD6Ju2UGYVWyEKXAvhhqS94Hm6-yMyegyjQM-MV6j0-mDnujDN72oLjPNCyfBlUsZ/pub?output=csv',
+    csvUrl: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTfX6o_W1y8q6v_r1R_S1p_S1p_S1p_S1p_S1p_S1p_S1p_S1p_S1p_S1p_S1p/pub?output=csv',
     categories: ['Character', 'Monster', 'Pet', 'Item', 'Magic', 'Area']
 };
 
@@ -177,7 +177,22 @@ function parseCSV(csv) {
     if (lines.length === 0) return [];
     const headers = lines[0].split(',').map(h => h.trim().toLowerCase().replace(/ /g, '_'));
     return lines.slice(1).map(line => {
-        const values = line.split(',').map(v => v.trim());
+        // Handle koma di dalam tanda kutip (tags/story yang mengandung koma)
+        const values = [];
+        let current = '';
+        let inQuotes = false;
+        for (let i = 0; i < line.length; i++) {
+            const char = line[i];
+            if (char === '"') {
+                inQuotes = !inQuotes;
+            } else if (char === ',' && !inQuotes) {
+                values.push(current.trim());
+                current = '';
+            } else {
+                current += char;
+            }
+        }
+        values.push(current.trim());
         const obj = {};
         headers.forEach((header, i) => { obj[header] = values[i] || ''; });
         return obj;
@@ -567,16 +582,33 @@ function renderArchive() {
         </div>
     `).join('');
 
-    /* REVISI: Selalu aktifkan scroll page-2 agar bisa scroll ketika data banyak */
+    /* REVISI: Auto-toggle scrolling for page-2: disable scroll when content is small.
+       This checks grid height vs container height and adds .no-scroll to #page-2 when content fits. */
     (function adjustPage2Scroll() {
         try {
             const page2 = document.getElementById('page-2');
             if (!page2) return;
-            // Selalu hapus no-scroll agar page-2 bisa di-scroll
-            page2.classList.remove('no-scroll');
-            page2.style.overflowY = 'auto';
+            const container = page2.querySelector('.page-container') || page2;
+            // small delay to allow images/layout to settle
+            const doCheck = () => {
+                const gridHeight = grid.scrollHeight || grid.offsetHeight || 0;
+                const containerHeight = (container.clientHeight || container.offsetHeight || page2.clientHeight || 0);
+                const threshold = 80; // leave some room (headers)
+                if (gridHeight > containerHeight - threshold) {
+                    page2.classList.remove('no-scroll');
+                } else {
+                    page2.classList.add('no-scroll');
+                }
+            };
+            setTimeout(doCheck, 80);
+            // re-run when images finish loading (in case layout changes)
+            Array.from(grid.querySelectorAll('img')).forEach(img => {
+                if (img.complete) return; // already loaded
+                img.onload = () => setTimeout(doCheck, 80);
+                img.onerror = () => setTimeout(doCheck, 80);
+            });
         } catch (e) {
-            // silent
+            // silent - keep original behavior if something unexpected
         }
     })();
 }
