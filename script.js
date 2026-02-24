@@ -174,9 +174,13 @@ async function loadRealmData() {
 
             const csvText = await response.text();
             rawData = parseCSV(csvText);
+            console.log('=== CSV FETCH SUCCESS ===');
+            console.log('Rows loaded:', rawData.length);
+            if (rawData.length > 0) console.log('First row:', rawData[0]);
 
             // Kalau data kosong/gagal parse, fallback ke mock
             if (!rawData || rawData.length === 0) {
+                console.warn('Data kosong! Fallback ke mock data.');
                 rawData = getMockArchive();
             }
         }
@@ -541,7 +545,7 @@ function selectRealm(cat, show = true) {
 
 function populateTags() {
     const tags = new Set();
-    rawData.filter(u => u.category === currentCat).forEach(u => {
+    rawData.filter(u => (u.category || '').trim().toLowerCase() === currentCat.trim().toLowerCase()).forEach(u => {
         if (u.tags) u.tags.split(',').forEach(t => tags.add(t.trim()));
     });
     const container = document.getElementById('dynamic-tags');
@@ -568,10 +572,21 @@ function populateTags() {
 function renderArchive() {
     const grid = document.getElementById('unit-grid');
     if (!grid) return;
+
+    // DEBUG — cek isi rawData di console
+    console.log('=== DEBUG rawData ===');
+    console.log('Total data:', rawData.length);
+    console.log('Current category:', currentCat);
+    if (rawData.length > 0) {
+        console.log('Sample row:', rawData[0]);
+        console.log('Semua kategori di data:', [...new Set(rawData.map(u => u.category))]);
+    }
+
     const filtered = rawData.filter(u => {
-        const matchCat = u.category === currentCat;
+        // FIX: case-insensitive + trim whitespace supaya ga mismatch
+        const matchCat = (u.category || '').trim().toLowerCase() === currentCat.trim().toLowerCase();
         const matchSearch = (u.name || '').toLowerCase().includes(filters.search || '');
-        const matchRarity = filters.rarity ? u.rarity === filters.rarity : true;
+        const matchRarity = filters.rarity ? (u.rarity || '').trim().toUpperCase() === filters.rarity.toUpperCase() : true;
         const matchTags = filters.tags && filters.tags.length > 0 ? filters.tags.every(t => u.tags && u.tags.includes(t)) : true;
         return matchCat && matchSearch && matchRarity && matchTags;
     });
@@ -579,7 +594,7 @@ function renderArchive() {
     // Update count bar — tampil "60 Character", "20 Pet", dst
     const countEl = document.getElementById('p2-count-text');
     if (countEl) {
-        const totalInCat = rawData.filter(u => u.category === currentCat).length;
+        const totalInCat = rawData.filter(u => (u.category || '').trim().toLowerCase() === currentCat.trim().toLowerCase()).length;
         const showing = filtered.length;
         const isFiltered = showing < totalInCat;
         countEl.textContent = isFiltered
