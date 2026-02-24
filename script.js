@@ -1,7 +1,7 @@
 /* CONSOLIDATED RPG SCRIPT SYSTEM - REVISED */
 
 const CONFIG = {
-    csvUrl:'https://docs.google.com/spreadsheets/d/e/2PACX-1vTIz5r4BkhocZryD6Ju2UGYVWyEKXAvhhqS94Hm6-yMyegyjQM-MV6j0-mDnujDN72oLjPNCyfBlUsZ/pub?gid=0&single=true&output=csv',
+    csvUrl: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTIz5r4BkhocZryD6Ju2UGYVWyEKXAvhhqS94Hm6-yMyegyjQM-MV6j0-mDnujDN72oLjPNCyfBlUsZ/pub?gid=0&single=true&output=csv',
     categories: ['Character', 'Monster', 'Pet', 'Item', 'Magic', 'Area']
 };
 
@@ -163,13 +163,28 @@ async function loadRealmData() {
         if (CONFIG.csvUrl.includes('S1p_S1p')) {
             rawData = getMockArchive();
         } else {
-            const response = await fetch(CONFIG.csvUrl);
+            // Timeout 8 detik — kalau tidak ada response, fallback ke mock data
+            const controller = new AbortController();
+            const timeout = setTimeout(() => controller.abort(), 8000);
+
+            const response = await fetch(CONFIG.csvUrl, {
+                signal: controller.signal
+            });
+            clearTimeout(timeout);
+
             const csvText = await response.text();
             rawData = parseCSV(csvText);
+
+            // Kalau data kosong/gagal parse, fallback ke mock
+            if (!rawData || rawData.length === 0) {
+                rawData = getMockArchive();
+            }
         }
     } catch (e) {
+        console.error("Data Sync Failed:", e);
         rawData = getMockArchive();
     }
+    return rawData;
 }
 
 function parseCSV(csv) {
@@ -582,33 +597,15 @@ function renderArchive() {
         </div>
     `).join('');
 
-    /* REVISI: Auto-toggle scrolling for page-2: disable scroll when content is small.
-       This checks grid height vs container height and adds .no-scroll to #page-2 when content fits. */
+    /* REVISI: Selalu aktifkan scroll page-2 agar bisa scroll ketika data banyak */
     (function adjustPage2Scroll() {
         try {
             const page2 = document.getElementById('page-2');
             if (!page2) return;
-            const container = page2.querySelector('.page-container') || page2;
-            // small delay to allow images/layout to settle
-            const doCheck = () => {
-                const gridHeight = grid.scrollHeight || grid.offsetHeight || 0;
-                const containerHeight = (container.clientHeight || container.offsetHeight || page2.clientHeight || 0);
-                const threshold = 80; // leave some room (headers)
-                if (gridHeight > containerHeight - threshold) {
-                    page2.classList.remove('no-scroll');
-                } else {
-                    page2.classList.add('no-scroll');
-                }
-            };
-            setTimeout(doCheck, 80);
-            // re-run when images finish loading (in case layout changes)
-            Array.from(grid.querySelectorAll('img')).forEach(img => {
-                if (img.complete) return; // already loaded
-                img.onload = () => setTimeout(doCheck, 80);
-                img.onerror = () => setTimeout(doCheck, 80);
-            });
+            page2.classList.remove('no-scroll');
+            page2.style.overflowY = 'auto';
         } catch (e) {
-            // silent - keep original behavior if something unexpected
+            // silent
         }
     })();
 }
