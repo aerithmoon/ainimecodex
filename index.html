@@ -12,33 +12,79 @@
     /* ── PAGE 1 ── */
     #page-1{overflow:hidden!important}
 
-    #page-2{overflow-y:auto!important;overflow-x:hidden!important}
+    /* ── PAGE 2 SCROLL ── */
+    #page-2{overflow-y:auto!important;overflow-x:hidden!important;position:relative}
     #page-2 .hero-section{overflow:visible!important;min-height:100vh}
-    #page-2 .cat-page-inner{display:flex;flex-direction:column;align-items:center;justify-content:flex-start;height:100%;padding:0 16px;padding-top:clamp(50px,8vh,80px);padding-bottom:30px;position:relative;overflow:visible}
+    #page-2 .cancel-btn-new{display:none!important}
+
+    /* ── PAGE 2 PORTAL WARP TRANSITION ── */
+    @keyframes p2PortalWarp{
+        0%  { opacity:0; transform:scale(0) rotate(-8deg); filter:blur(18px) brightness(2.5); }
+        35% { opacity:.7; transform:scale(1.08) rotate(2deg); filter:blur(4px) brightness(1.4); }
+        65% { opacity:1; transform:scale(.97) rotate(-1deg); filter:blur(1px) brightness(1.1); }
+        100%{ opacity:1; transform:scale(1) rotate(0deg); filter:blur(0) brightness(1); }
+    }
+    @keyframes p2WarpRipple{
+        0%  { opacity:.8; transform:translate(-50%,-50%) scale(0); }
+        60% { opacity:.3; transform:translate(-50%,-50%) scale(2.5); }
+        100%{ opacity:0; transform:translate(-50%,-50%) scale(4); }
+    }
+    #page-2.p2-animate{ animation:p2PortalWarp .6s cubic-bezier(.22,.68,0,1.1) forwards; }
+    #page-2.p2-animate::before{
+        content:'';position:fixed;top:50%;left:50%;
+        width:300px;height:300px;border-radius:50%;
+        background:radial-gradient(circle,rgba(160,100,255,.55) 0%,rgba(255,107,157,.3) 40%,transparent 70%);
+        transform:translate(-50%,-50%) scale(0);
+        animation:p2WarpRipple .6s ease-out forwards;
+        pointer-events:none;z-index:0;
+    }
+
+    /* ── PAGE 2 LAYOUT — MOBILE: single col, centered ── */
+    .p2-page-wrap{
+        display:flex;flex-direction:column;align-items:center;
+        min-height:100vh;padding:clamp(48px,8vh,80px) 16px 40px;
+        position:relative;z-index:1;box-sizing:border-box;
+    }
+    /* Left block (all content on mobile) */
+    .p2-left-block{display:flex;flex-direction:column;align-items:center;gap:10px;width:100%;max-width:400px}
+    /* Right block: hidden on mobile, shown on desktop */
+    .p2-right-block{display:flex;flex-direction:column;align-items:center;gap:12px;width:100%;max-width:400px}
+
+    /* ── PAGE 2 LAYOUT — DESKTOP: 2-col ── */
     @media(min-width:1024px){
         #page-2{overflow:hidden!important}
         #page-2 .hero-section{height:100vh;overflow:hidden!important}
-        #page-2 .cat-page-inner{justify-content:center;padding-top:0;padding-bottom:0}
+        .p2-page-wrap{
+            flex-direction:row;align-items:center;justify-content:center;
+            gap:60px;padding:0 80px;min-height:100vh;
+        }
+        .p2-left-block{max-width:460px;align-items:flex-start}
+        .p2-left-block .p2-crown{justify-content:flex-start}
+        .p2-left-block .p2-season-big{text-align:left!important}
+        .p2-left-block .p2-subtitle-text{text-align:left;margin:0}
+        .p2-left-block .p2-tagline{align-self:flex-start}
+        .p2-left-block .p2-stats-row{justify-content:flex-start}
+        .p2-left-block .p2-quote-box{max-width:100%;align-items:flex-start}
+        .p2-left-block .p2-quote-icon{align-self:flex-start}
+        .p2-left-block .p2-quote-text{text-align:left}
+        .p2-left-block .p2-quote-source{align-self:flex-end}
+        .p2-right-block{max-width:340px;align-items:stretch}
+        .p2-rune-strip{justify-content:center}
     }
-    #page-2 .cancel-btn-new{display:none!important}
 
-    /* ── PAGE 2 CENTERED LAYOUT ── */
-    .p2-center-block{display:flex;flex-direction:column;align-items:center;gap:18px;width:100%;max-width:420px;padding:0 12px}
+    /* ── PAGE 2 CENTER BLOCK (legacy wrapper, keep compatible) ── */
+    .p2-center-block{display:contents}
 
     .p2-crown{display:flex;align-items:center;gap:10px;opacity:.75}
     .p2-crown-star{font-size:1rem;color:rgba(200,170,255,.7)}
     .p2-crown-gem{font-size:1.8rem;color:#FF6B9D;animation:p2GemPulse 2.8s ease-in-out infinite alternate}
     @keyframes p2GemPulse{0%{opacity:.65;transform:scale(.95)}100%{opacity:1;transform:scale(1.1)}}
 
-    /* Season label: NO box, NO glow — pure gradient text, no clip */
-    .p2-season-big{font-family:'Orbitron',sans-serif!important;font-size:clamp(2.4rem,9vw,3.8rem)!important;font-weight:900!important;background:linear-gradient(135deg,#fff 0%,#FFB7D5 40%,#FF6B9D 65%,#C9B1FF 100%)!important;-webkit-background-clip:text!important;background-clip:text!important;-webkit-text-fill-color:transparent!important;line-height:1.05!important;letter-spacing:.06em!important;text-align:center!important;word-break:keep-all!important;overflow:visible!important}
+    .p2-season-big{font-family:'Orbitron',sans-serif!important;font-size:clamp(2.6rem,10vw,4.2rem)!important;font-weight:900!important;background:linear-gradient(135deg,#fff 0%,#FFB7D5 40%,#FF6B9D 65%,#C9B1FF 100%)!important;-webkit-background-clip:text!important;background-clip:text!important;-webkit-text-fill-color:transparent!important;line-height:1.05!important;letter-spacing:.06em!important;text-align:center!important;word-break:keep-all!important;overflow:visible!important}
 
-    /* Subtitle text below season name */
-    .p2-subtitle-text{font-family:'Exo 2',sans-serif;font-size:.7rem;color:rgba(200,180,230,.65);text-align:center;letter-spacing:.05em;line-height:1.5;max-width:320px;margin:0 auto;font-style:italic}
+    .p2-subtitle-text{font-family:'Exo 2',sans-serif;font-size:.72rem;color:rgba(200,180,230,.65);text-align:center;letter-spacing:.05em;line-height:1.5;max-width:340px;margin:0 auto;font-style:italic}
+    .p2-tagline{font-family:'Orbitron',sans-serif;font-size:.55rem;letter-spacing:.28em;color:rgba(200,180,255,.5);text-transform:uppercase}
 
-    .p2-tagline{font-family:'Orbitron',sans-serif;font-size:.55rem;letter-spacing:.28em;color:rgba(200,180,255,.5);text-transform:uppercase;margin-top:0}
-
-    /* Dual buttons — sakura palette to match page 1, NO box-shadow glow */
     .p2-dual-btns{display:flex;gap:14px;width:100%;justify-content:center}
     .p2-action-btn{flex:1;max-width:160px;display:flex;flex-direction:column;align-items:center;gap:7px;padding:24px 12px 20px;border-radius:20px;cursor:pointer;transition:all .28s ease;position:relative;overflow:hidden}
     .p2-btn-season{background:linear-gradient(145deg,rgba(155,93,229,.25),rgba(155,93,229,.12));border:1.5px solid rgba(155,93,229,.55);color:#fff}
@@ -51,8 +97,7 @@
     .p2-btn-name{font-family:'Orbitron',sans-serif;font-size:.62rem;font-weight:800;letter-spacing:.18em}
     .p2-btn-sub{font-family:'Orbitron',sans-serif;font-size:.55rem;opacity:.5;letter-spacing:.1em}
 
-    /* HOME text button below dual btns */
-    .p2-home-btn{display:flex;align-items:center;gap:7px;background:transparent;border:1px solid rgba(255,255,255,.18);border-radius:50px;padding:10px 28px;color:rgba(255,255,255,.6);font-family:'Orbitron',sans-serif;font-size:.6rem;font-weight:700;letter-spacing:.2em;cursor:pointer;transition:all .22s ease;text-transform:uppercase}
+    .p2-home-btn{display:flex;align-items:center;gap:7px;background:transparent;border:1px solid rgba(255,255,255,.18);border-radius:50px;padding:10px 28px;color:rgba(255,255,255,.6);font-family:'Orbitron',sans-serif;font-size:.6rem;font-weight:700;letter-spacing:.2em;cursor:pointer;transition:all .22s ease;text-transform:uppercase;align-self:center}
     .p2-home-btn i{font-size:.75rem}
     .p2-home-btn:hover{background:rgba(255,255,255,.08);border-color:rgba(255,255,255,.4);color:rgba(255,255,255,.9)}
 
@@ -61,7 +106,6 @@
     .p2-rune.r1{animation-delay:0s}.p2-rune.r2{animation-delay:.25s;color:rgba(255,107,157,.3)}.p2-rune.r3{animation-delay:.5s}.p2-rune.r4{animation-delay:.75s;color:rgba(200,170,255,.3)}.p2-rune.r5{animation-delay:1s}.p2-rune.r6{animation-delay:1.25s;color:rgba(255,107,157,.3)}
     @keyframes p2RuneFloat{0%{opacity:.2;transform:translateY(2px)}100%{opacity:.6;transform:translateY(-2px)}}
 
-    /* Category Select Modal */
     .catsel-content{max-width:420px;text-align:center}
     .catsel-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:14px 0 18px}
 
@@ -236,22 +280,22 @@
                 <div class="circle-1"></div>
                 <div class="circle-2"></div>
             </div>
-            <div class="cat-page-inner">
-                <div class="p2-center-block">
 
-                    <!-- Crown ornament -->
+            <!-- 2-col layout wrapper -->
+            <div class="p2-page-wrap">
+
+                <!-- LEFT COL: title + stats + quote -->
+                <div class="p2-left-block">
                     <div class="p2-crown">
                         <span class="p2-crown-star">◈</span>
                         <span class="p2-crown-gem">✦</span>
                         <span class="p2-crown-star">◈</span>
                     </div>
-
-                    <!-- Season label -->
                     <div class="p2-season-big" id="cat-season-label">SEASON 1</div>
                     <p class="p2-subtitle-text">Legends never fade — they just wait to be rediscovered.</p>
                     <div class="p2-tagline">✧ CHOOSE YOUR PATH ✧</div>
 
-                    <!-- Stats counter row -->
+                    <!-- Stats counter -->
                     <div class="p2-stats-row">
                         <div class="p2-stat">
                             <span class="p2-stat-val" id="p2-stat-units">0</span>
@@ -275,6 +319,10 @@
                         <p class="p2-quote-text" id="p2-quote-text">Waiting for the legend to speak...</p>
                         <p class="p2-quote-source" id="p2-quote-source">— Unknown</p>
                     </div>
+                </div>
+
+                <!-- RIGHT COL: spotlight + buttons + rune -->
+                <div class="p2-right-block">
 
                     <!-- Unit Spotlight -->
                     <div class="p2-spotlight hidden" id="p2-spotlight" onclick="p2SpotlightClick()">
@@ -310,7 +358,7 @@
                         <span>HOME</span>
                     </button>
 
-                    <!-- Decorative rune strip -->
+                    <!-- Rune strip -->
                     <div class="p2-rune-strip">
                         <span class="p2-rune r1">✦</span>
                         <span class="p2-rune r2">◈</span>
@@ -320,7 +368,8 @@
                         <span class="p2-rune r6">✦</span>
                     </div>
                 </div>
-            </div>
+
+            </div><!-- end p2-page-wrap -->
         </div>
     </section>
     <section id="page-2" class="page">

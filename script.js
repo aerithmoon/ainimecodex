@@ -9,6 +9,7 @@ const AWAKENING_ENABLED = false;
 
 let rawData = [];
 let _page2SeasonFlow = false; // flag: apakah lagi di flow season→category page 2
+let _p2EntryFresh = false;    // flag: masuk page 2 dari home, belum pernah pilih season di sesi ini
 
 let currentSeason = localStorage.getItem('currentSeason') || '1';
 let currentCat = localStorage.getItem('currentCat') || 'Character';
@@ -69,11 +70,21 @@ const UI = {
 
         // Page 2: render stats/quote/spotlight, lalu auto-open season flow
         if (pageId === 'page-2') {
+            // Zoom-in animation
+            const p2el = document.getElementById('page-2');
+            if (p2el) {
+                p2el.classList.remove('p2-animate');
+                void p2el.offsetWidth; // reflow
+                p2el.classList.add('p2-animate');
+            }
             renderPage2Content();
-            setTimeout(() => {
-                _page2SeasonFlow = true;
-                openSeasonChangeModal();
-            }, 350);
+            // Auto-open season modal HANYA jika fresh entry dari home
+            if (_p2EntryFresh) {
+                setTimeout(() => {
+                    _page2SeasonFlow = true;
+                    openSeasonChangeModal();
+                }, 350);
+            }
         }
     },
 
@@ -298,6 +309,7 @@ function selectSeasonPage2Flow(season) {
     currentSeason = String(season);
     localStorage.setItem('currentSeason', currentSeason);
     updateSeasonLabels();
+    _p2EntryFresh = false; // season sudah dipilih, bukan fresh entry lagi
 
     // Tutup season modal
     const chgModal = document.getElementById('season-change-modal');
@@ -636,15 +648,20 @@ async function init() {
         selectRealm(currentCat, false);
         UI.showPage('page-3');
     } else if (lastPage === 'page-2') {
+        // Restore page 2 tanpa auto-open season popup (_p2EntryFresh tetap false)
+        _p2EntryFresh = false;
         UI.showPage('page-2');
     } else {
         UI.showPage('page-1');
     }
 
-    // ── START BUTTON: buka season popup ──
+    // ── START BUTTON: langsung ke page-2, auto-buka season popup ──
     const startBtn = document.getElementById('start-btn');
     if (startBtn) {
-        startBtn.onclick = () => openSeasonSelectModal();
+        startBtn.onclick = () => {
+            _p2EntryFresh = true;  // tandai sebagai fresh entry dari home
+            UI.showPage('page-2');
+        };
     }
 
     // ── CLOSE SEASON SELECT MODAL ──
@@ -665,7 +682,10 @@ async function init() {
 
     // ── SEASON CHANGE MODAL (page 2 & 3) ──
     const p2SeasonBtn = document.getElementById('p2-season-btn');
-    if (p2SeasonBtn) p2SeasonBtn.onclick = () => openSeasonChangeModal();
+    if (p2SeasonBtn) p2SeasonBtn.onclick = () => {
+        _page2SeasonFlow = true; // re-open flow dari page 2 manual
+        openSeasonChangeModal();
+    };
     const p3SeasonBtn = document.getElementById('p3-season-btn');
     if (p3SeasonBtn) p3SeasonBtn.onclick = () => openSeasonChangeModal();
 
@@ -710,6 +730,10 @@ async function init() {
             const modal = document.getElementById('season-change-modal');
             if (modal) modal.classList.add('hidden');
             _page2SeasonFlow = false;
+            if (_p2EntryFresh) {
+                _p2EntryFresh = false;
+                UI.showPage('page-1');
+            }
         };
     }
     const seasonChangeBackdrop = document.getElementById('season-change-backdrop');
@@ -718,6 +742,10 @@ async function init() {
             const modal = document.getElementById('season-change-modal');
             if (modal) modal.classList.add('hidden');
             _page2SeasonFlow = false;
+            if (_p2EntryFresh) {
+                _p2EntryFresh = false;
+                UI.showPage('page-1');
+            }
         };
     }
 
