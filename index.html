@@ -9,38 +9,71 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@700;900&family=Cinzel:wght@700&family=Exo+2:wght@300;400;600;800&family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
     <style>
-    /* ── PAGE 1 LAYOUT: no inline season grid ── */
+    /* ── PAGE 1 ── */
     #page-1{overflow:hidden!important}
 
-    /* ── PAGE 2: no scroll on page itself ── */
+    /* ── PAGE 2: no scroll ── */
     #page-2{overflow:hidden!important}
     #page-2 .hero-section{overflow:hidden!important;height:100vh}
-    #page-2 .cat-page-inner{display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;padding:24px 16px 40px;position:relative;overflow:hidden}
-    #page-2 .cat-page-topbar{display:flex;align-items:center;width:100%;max-width:540px;margin-bottom:24px;gap:8px}
-    #page-2 .cat-page-back{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.14);border-radius:50%;width:40px;height:40px;display:flex;align-items:center;justify-content:center;color:#fff;cursor:pointer;font-size:.85rem;flex-shrink:0;transition:background .2s}
-    #page-2 .cat-page-back:hover{background:rgba(255,255,255,.14)}
-    #page-2 .cat-page-heading{flex:1;text-align:center}
-    #page-2 .cat-season-badge{font-family:'Orbitron',sans-serif;font-size:.62rem;letter-spacing:.22em;opacity:.55;margin-bottom:3px}
-    #page-2 .cat-page-title{font-family:'Cinzel Decorative',serif;font-size:clamp(1rem,4vw,1.45rem);margin:0;background:linear-gradient(135deg,#fff 30%,rgba(200,160,255,.9));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
-    #page-2 .cat-page-spacer{width:40px;flex-shrink:0}
-    #page-2 .category-grid{max-width:540px;width:100%;position:relative}
+    #page-2 .cat-page-inner{display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;padding:16px;position:relative;overflow:hidden}
     #page-2 .cancel-btn-new{display:none!important}
 
-    /* Season Change Button on Page 2 */
-    #p2-season-btn{background:rgba(255,255,255,.08);border:1px solid rgba(160,120,255,.4);border-radius:10px;height:40px;padding:0 12px;display:flex;align-items:center;gap:6px;color:rgba(200,170,255,.9);cursor:pointer;font-family:'Orbitron',sans-serif;font-size:.58rem;letter-spacing:.1em;flex-shrink:0;transition:all .2s ease;text-transform:uppercase;white-space:nowrap}
-    #p2-season-btn:hover{background:rgba(160,100,255,.22);border-color:rgba(160,120,255,.75);color:#fff}
-    #p2-season-btn i{font-size:.8rem}
-    #p2-season-btn .p2-season-num{font-size:.72rem;font-weight:800;color:rgba(210,175,255,.95)}
+    /* ── PAGE 2 NEW CENTERED LAYOUT ── */
+    .p2-back-abs{position:absolute!important;top:16px!important;left:16px!important;background:rgba(255,255,255,.08)!important;border:1px solid rgba(255,255,255,.18)!important;border-radius:50%!important;width:40px!important;height:40px!important;display:flex!important;align-items:center!important;justify-content:center!important;color:#fff!important;cursor:pointer!important;font-size:.85rem!important;transition:background .2s!important;z-index:10!important;flex-shrink:0!important}
+    .p2-back-abs:hover{background:rgba(255,255,255,.18)!important}
+
+    .p2-center-block{display:flex;flex-direction:column;align-items:center;gap:18px;width:100%;max-width:420px;padding:0 12px}
+
+    .p2-crown{display:flex;align-items:center;gap:10px;opacity:.75}
+    .p2-crown-star{font-size:1rem;color:rgba(200,170,255,.7)}
+    .p2-crown-gem{font-size:1.8rem;color:var(--accent-clr,#FF6B9D);animation:p2GemPulse 2.5s ease-in-out infinite alternate}
+    @keyframes p2GemPulse{0%{opacity:.6;transform:scale(.94);filter:drop-shadow(0 0 4px rgba(var(--accent-rgb,255,107,157),.4))}100%{opacity:1;transform:scale(1.08);filter:drop-shadow(0 0 14px rgba(var(--accent-rgb,255,107,157),.8))}}
+
+    .p2-season-frame{position:relative;padding:18px 36px;border:1.5px solid rgba(var(--accent-rgb,255,107,157),.35);border-radius:20px;background:rgba(var(--accent-rgb,255,107,157),.06);text-align:center;backdrop-filter:blur(10px)}
+    .p2-season-frame::before{content:'';position:absolute;inset:-1px;border-radius:20px;background:linear-gradient(135deg,rgba(var(--accent-rgb,255,107,157),.25),transparent 55%,rgba(var(--accent-rgb,255,107,157),.12));pointer-events:none}
+    .p2-season-big{font-family:'Orbitron',sans-serif!important;font-size:clamp(2.2rem,9vw,4rem)!important;font-weight:900!important;background:linear-gradient(135deg,#fff 0%,rgba(var(--accent-rgb,255,107,157),1) 50%,#C9B1FF 100%)!important;-webkit-background-clip:text!important;background-clip:text!important;-webkit-text-fill-color:transparent!important;filter:drop-shadow(0 0 18px rgba(var(--accent-rgb,255,107,157),.5))!important;line-height:1!important;letter-spacing:.08em!important}
+
+    .p2-tagline{font-family:'Orbitron',sans-serif;font-size:.55rem;letter-spacing:.28em;color:rgba(200,180,255,.5);text-transform:uppercase;margin-top:-6px}
+
+    .p2-dual-btns{display:flex;gap:14px;width:100%;justify-content:center}
+    .p2-action-btn{flex:1;max-width:155px;display:flex;flex-direction:column;align-items:center;gap:7px;padding:22px 12px 18px;border-radius:20px;cursor:pointer;transition:all .28s ease;position:relative;overflow:hidden}
+    .p2-action-btn::before{content:'';position:absolute;inset:0;border-radius:20px;opacity:0;transition:opacity .28s ease}
+    .p2-action-btn:hover::before{opacity:1}
+    .p2-btn-season{background:linear-gradient(145deg,rgba(120,60,240,.22),rgba(60,90,255,.16));border:1.5px solid rgba(150,100,255,.5);color:#fff}
+    .p2-btn-season::before{background:linear-gradient(145deg,rgba(120,60,240,.15),rgba(60,90,255,.1))}
+    .p2-btn-season:hover{border-color:rgba(170,120,255,.9);transform:translateY(-5px);box-shadow:0 0 32px rgba(130,70,255,.45),0 8px 24px rgba(0,0,0,.35)}
+    .p2-btn-cat{background:linear-gradient(145deg,rgba(var(--accent-rgb,255,107,157),.2),rgba(var(--accent-rgb,255,107,157),.1));border:1.5px solid rgba(var(--accent-rgb,255,107,157),.5);color:#fff}
+    .p2-btn-cat:hover{border-color:rgba(var(--accent-rgb,255,107,157),.95);transform:translateY(-5px);box-shadow:0 0 32px rgba(var(--accent-rgb,255,107,157),.4),0 8px 24px rgba(0,0,0,.35)}
+    .p2-action-btn i{font-size:1.9rem;margin-bottom:2px}
+    .p2-btn-season i{color:rgba(190,155,255,.9)}
+    .p2-btn-cat i{color:rgba(var(--accent-rgb,255,107,157),1)}
+    .p2-btn-name{font-family:'Orbitron',sans-serif;font-size:.62rem;font-weight:800;letter-spacing:.18em}
+    .p2-btn-sub{font-family:'Orbitron',sans-serif;font-size:.55rem;opacity:.5;letter-spacing:.1em}
+
+    .p2-rune-strip{display:flex;gap:14px;align-items:center;margin-top:2px}
+    .p2-rune{font-size:.88rem;color:rgba(200,170,255,.35);animation:p2RuneFloat 3s ease-in-out infinite alternate}
+    .p2-rune.r1{animation-delay:0s}.p2-rune.r2{animation-delay:.25s;color:rgba(var(--accent-rgb,255,107,157),.35)}.p2-rune.r3{animation-delay:.5s}.p2-rune.r4{animation-delay:.75s;color:rgba(200,170,255,.35)}.p2-rune.r5{animation-delay:1s}.p2-rune.r6{animation-delay:1.25s;color:rgba(var(--accent-rgb,255,107,157),.35)}
+    @keyframes p2RuneFloat{0%{opacity:.25;transform:translateY(2px)}100%{opacity:.65;transform:translateY(-2px)}}
+
+    /* Category Select Modal */
+    .catsel-content{max-width:420px;text-align:center}
+    .catsel-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:14px 0 18px}
 
     /* ── PAGE 4: no scroll ── */
     #page-4{overflow:hidden!important}
 
-    /* ── PAGE 4 nav: slide transition, visible by default ── */
-    .detail-nav-static{transition:transform 0.4s cubic-bezier(0.165,0.84,0.44,1),opacity 0.4s ease!important}
+    /* ── PAGE 4 nav: slide transition ── */
+    .detail-nav-static{transition:transform 0.45s cubic-bezier(0.165,0.84,0.44,1),opacity 0.45s ease!important}
     .detail-nav-static.nav-hidden{transform:translateY(-90px)!important;opacity:0!important;pointer-events:none!important}
 
+    /* ── PAGE 4 SEASON BUTTON: icon only ── */
+    .unit-season-section{margin-top:8px}
+    .season-appearances-btn{display:flex;align-items:center;justify-content:center;width:100%;padding:16px 20px;background:linear-gradient(135deg,rgba(140,80,255,.18),rgba(80,130,255,.18));border:1px solid rgba(160,120,255,.35);border-radius:12px;color:#fff;cursor:pointer;transition:all .2s ease}
+    .season-appearances-btn:hover{background:linear-gradient(135deg,rgba(140,80,255,.32),rgba(80,130,255,.32));border-color:rgba(160,120,255,.65);transform:translateY(-1px)}
+    .season-appearances-btn i{font-size:1.5rem;color:rgba(190,150,255,.9)}
+
     /* ── SEASON SELECT POPUP (PAGE 1) ── */
-    #season-select-modal .modal-content{max-width:400px;padding:28px 20px 20px;text-align:center}
+    #season-select-modal .modal-content{max-width:420px;padding:28px 20px 20px;text-align:center}
     #season-select-modal .modal-content h3{margin-bottom:4px}
     .season-select-subtitle{font-size:.68rem;opacity:.5;letter-spacing:.1em;margin-bottom:14px;text-transform:uppercase}
     .season-select-grid{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;padding:4px 2px 14px;max-height:50vh;overflow-y:auto;scrollbar-width:thin;scrollbar-color:rgba(160,100,255,.5) transparent}
@@ -53,7 +86,7 @@
     .season-pick-card .s-num{font-family:'Orbitron',sans-serif;font-size:1.15rem;font-weight:800;color:var(--clr,#fff);line-height:1}
     .season-pick-card .s-label{font-size:.56rem;letter-spacing:.15em;opacity:.5;margin-top:5px;text-transform:uppercase}
 
-    /* ── SEASON POPUP (PAGE 2 change season + PAGE 4 appearances) ── */
+    /* ── SEASON POPUP (change season + appearances) ── */
     .season-popup-content{max-width:360px;text-align:center}
     .season-popup-content h3{margin-bottom:4px}
     .season-popup-subtitle{font-size:.68rem;opacity:.5;letter-spacing:.1em;margin-bottom:14px;text-transform:uppercase}
@@ -65,12 +98,6 @@
     .season-chip:hover{background:rgba(160,100,255,.18);border-color:rgba(160,120,255,.5)}
     .season-chip.active{background:rgba(160,100,255,.28);border-color:rgba(160,120,255,.75);color:rgb(210,175,255);font-weight:700}
     .season-chip.active::after{content:' ✦';opacity:.7}
-
-    /* ── SEASON BUTTON PAGE 4 ── */
-    .unit-season-section{margin-top:8px}
-    .season-appearances-btn{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;padding:14px 20px;background:linear-gradient(135deg,rgba(140,80,255,.18),rgba(80,130,255,.18));border:1px solid rgba(160,120,255,.35);border-radius:12px;color:#fff;font-family:'Orbitron',sans-serif;font-size:.72rem;letter-spacing:.12em;cursor:pointer;transition:all .2s ease;text-transform:uppercase}
-    .season-appearances-btn:hover{background:linear-gradient(135deg,rgba(140,80,255,.32),rgba(80,130,255,.32));border-color:rgba(160,120,255,.65);transform:translateY(-1px)}
-    .season-appearances-btn i{font-size:1rem;color:rgba(190,150,255,.9)}
     </style>
 </head>
 <body class="theme-character">
@@ -110,41 +137,45 @@
                 <div class="circle-2"></div>
             </div>
             <div class="cat-page-inner">
-                <div class="cat-page-topbar">
-                    <button class="cat-page-back back-to-1"><i class="fas fa-chevron-left"></i></button>
-                    <div class="cat-page-heading">
-                        <div class="cat-season-badge" id="cat-season-label">SEASON 1</div>
-                        <h1 class="cat-page-title">SELECT CATEGORY</h1>
+                <!-- Back button top-left -->
+                <button class="cat-page-back p2-back-abs back-to-1"><i class="fas fa-chevron-left"></i></button>
+
+                <div class="p2-center-block">
+                    <!-- Crown ornament -->
+                    <div class="p2-crown">
+                        <span class="p2-crown-star">◈</span>
+                        <span class="p2-crown-gem">✦</span>
+                        <span class="p2-crown-star">◈</span>
                     </div>
-                    <button id="p2-season-btn" title="Change Season">
-                        <i class="fas fa-calendar-alt"></i>
-                        <span class="p2-season-num" id="p2-season-num-display">S1</span>
-                    </button>
-                </div>
-                <div class="category-grid">
-                    <div class="cat-card" data-category="Character" style="--clr:#FF5252">
-                        <div class="cat-icon"><i class="fas fa-shield-halved"></i></div>
-                        <span class="cat-name">CHARACTER</span>
+
+                    <!-- Big Season Label -->
+                    <div class="p2-season-frame">
+                        <div class="p2-season-big" id="cat-season-label">SEASON 1</div>
                     </div>
-                    <div class="cat-card" data-category="Monster" style="--clr:#9C6FE4">
-                        <div class="cat-icon"><i class="fas fa-dragon"></i></div>
-                        <span class="cat-name">MONSTER</span>
+                    <div class="p2-tagline">✧ CHOOSE YOUR PATH ✧</div>
+
+                    <!-- 2 Action Buttons -->
+                    <div class="p2-dual-btns">
+                        <button id="p2-season-btn" class="p2-action-btn p2-btn-season">
+                            <i class="fas fa-layer-group"></i>
+                            <span class="p2-btn-name">SEASON</span>
+                            <span class="p2-btn-sub" id="p2-season-num-display">S1</span>
+                        </button>
+                        <button id="p2-category-btn" class="p2-action-btn p2-btn-cat">
+                            <i class="fas fa-compass"></i>
+                            <span class="p2-btn-name">CATEGORY</span>
+                            <span class="p2-btn-sub">SELECT</span>
+                        </button>
                     </div>
-                    <div class="cat-card" data-category="Pet" style="--clr:#FF4DB8">
-                        <div class="cat-icon"><i class="fas fa-paw"></i></div>
-                        <span class="cat-name">PET</span>
-                    </div>
-                    <div class="cat-card" data-category="Item" style="--clr:#4CAF50">
-                        <div class="cat-icon"><i class="fas fa-gem"></i></div>
-                        <span class="cat-name">ITEM</span>
-                    </div>
-                    <div class="cat-card" data-category="Magic" style="--clr:#5B86E5">
-                        <div class="cat-icon"><i class="fas fa-wand-sparkles"></i></div>
-                        <span class="cat-name">MAGIC</span>
-                    </div>
-                    <div class="cat-card" data-category="Area" style="--clr:#E8B84B">
-                        <div class="cat-icon"><i class="fas fa-map-location-dot"></i></div>
-                        <span class="cat-name">AREA</span>
+
+                    <!-- Decorative rune strip -->
+                    <div class="p2-rune-strip">
+                        <span class="p2-rune r1">✦</span>
+                        <span class="p2-rune r2">◈</span>
+                        <span class="p2-rune r3">✧</span>
+                        <span class="p2-rune r4">★</span>
+                        <span class="p2-rune r5">◆</span>
+                        <span class="p2-rune r6">✦</span>
                     </div>
                 </div>
             </div>
@@ -162,10 +193,11 @@
                     <div class="p2-title-wrap">
                         <h2 id="category-title">ARCHIVE</h2>
                     </div>
-                    <button id="p3-season-btn" class="p2-realm-btn" title="Change Season" style="margin-right:4px"><i class="fas fa-calendar-alt"></i></button>
+                    <button id="p3-season-btn" class="p2-realm-btn" title="Change Season" style="margin-right:4px"><i class="fas fa-layer-group"></i></button>
                     <button id="quick-change-btn" class="p2-realm-btn" title="Change Category">
                         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
                     </button>
+                    <button class="p2-realm-btn back-to-1" title="Home"><i class="fas fa-house"></i></button>
                 </div>
                 <div class="p2-search-row">
                     <div class="p2-search-box">
@@ -229,13 +261,48 @@
                 <div class="unit-gallery unit-season-section">
                     <h4 class="gallery-title">SEASON</h4>
                     <button id="season-appearances-btn" class="season-appearances-btn">
-                        <i class="fas fa-calendar-alt"></i>
-                        <span>LIHAT KEMUNCULAN SEASON</span>
+                        <i class="fas fa-layer-group"></i>
                     </button>
                 </div>
             </div>
         </div>
     </section>
+
+    <!-- CATEGORY SELECT MODAL (Page 2 - CATEGORY button) -->
+    <div id="category-select-modal" class="rpg-modal hidden">
+        <div class="modal-backdrop" id="category-select-backdrop"></div>
+        <div class="modal-content catsel-content">
+            <h3>PILIH KATEGORI</h3>
+            <p class="season-select-subtitle">Pilih dunia yang ingin kamu jelajahi</p>
+            <div class="catsel-grid">
+                <div class="cat-card" data-category="Character" style="--clr:#FF5252">
+                    <div class="cat-icon"><i class="fas fa-shield-halved"></i></div>
+                    <span class="cat-name">CHARACTER</span>
+                </div>
+                <div class="cat-card" data-category="Monster" style="--clr:#9C6FE4">
+                    <div class="cat-icon"><i class="fas fa-dragon"></i></div>
+                    <span class="cat-name">MONSTER</span>
+                </div>
+                <div class="cat-card" data-category="Pet" style="--clr:#FF4DB8">
+                    <div class="cat-icon"><i class="fas fa-paw"></i></div>
+                    <span class="cat-name">PET</span>
+                </div>
+                <div class="cat-card" data-category="Item" style="--clr:#4CAF50">
+                    <div class="cat-icon"><i class="fas fa-gem"></i></div>
+                    <span class="cat-name">ITEM</span>
+                </div>
+                <div class="cat-card" data-category="Magic" style="--clr:#5B86E5">
+                    <div class="cat-icon"><i class="fas fa-wand-sparkles"></i></div>
+                    <span class="cat-name">MAGIC</span>
+                </div>
+                <div class="cat-card" data-category="Area" style="--clr:#E8B84B">
+                    <div class="cat-icon"><i class="fas fa-map-location-dot"></i></div>
+                    <span class="cat-name">AREA</span>
+                </div>
+            </div>
+            <button id="close-category-select" class="rpg-btn-small">BATAL</button>
+        </div>
+    </div>
 
     <!-- SEASON SELECT MODAL (Page 1 - ENTER WORLD) -->
     <div id="season-select-modal" class="rpg-modal hidden">

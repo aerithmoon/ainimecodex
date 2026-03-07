@@ -228,9 +228,9 @@ async function startLoadingAnimation() {
    SEASON COLORS & ICONS
 ═══════════════════════════════════════════════ */
 const SEASON_COLORS = [
-    '#FF5252','#FF9800','#FFD700','#4CAF50',
-    '#5B86E5','#9C6FE4','#FF4DB8','#00BCD4',
-    '#E8B84B','#76FF03','#F06292','#4DD0E1'
+    '#9B5DE5','#FF6B9D','#00BBF9','#FEE440',
+    '#00F5D4','#F15BB5','#5B86E5','#FF9800',
+    '#4CAF50','#FF4DB8','#00BCD4','#E8B84B'
 ];
 const SEASON_ICONS = ['✦','◈','✧','★','◆','✦','◈','✧','★','◆','✦','◈'];
 
@@ -382,6 +382,30 @@ async function init() {
     if (p2SeasonBtn) p2SeasonBtn.onclick = () => openSeasonChangeModal();
     const p3SeasonBtn = document.getElementById('p3-season-btn');
     if (p3SeasonBtn) p3SeasonBtn.onclick = () => openSeasonChangeModal();
+
+    // ── CATEGORY SELECT BUTTON (PAGE 2) ──
+    const p2CatBtn = document.getElementById('p2-category-btn');
+    if (p2CatBtn) {
+        p2CatBtn.onclick = () => {
+            const modal = document.getElementById('category-select-modal');
+            if (modal) modal.classList.remove('hidden');
+        };
+    }
+    const closeCatSelect = document.getElementById('close-category-select');
+    if (closeCatSelect) {
+        closeCatSelect.onclick = () => {
+            const modal = document.getElementById('category-select-modal');
+            if (modal) modal.classList.add('hidden');
+        };
+    }
+    const catSelectBackdrop = document.getElementById('category-select-backdrop');
+    if (catSelectBackdrop) {
+        catSelectBackdrop.onclick = () => {
+            const modal = document.getElementById('category-select-modal');
+            if (modal) modal.classList.add('hidden');
+        };
+    }
+
     const closeSeasonChange = document.getElementById('close-season-change');
     if (closeSeasonChange) {
         closeSeasonChange.onclick = () => {
@@ -542,7 +566,7 @@ async function init() {
             clearTimeout(navHideTimer);
             navHideTimer = setTimeout(() => {
                 nav.classList.add('nav-hidden');
-            }, 2000);
+            }, 3500);
         }
 
         function hidePage4Nav() {
@@ -648,6 +672,8 @@ function selectRealm(cat, show = true) {
     if (titleEl) titleEl.innerText = `S${currentSeason} · ${cat.toUpperCase()}`;
 
     if (UI.modal) UI.modal.classList.add('hidden');
+    const catSelModal = document.getElementById('category-select-modal');
+    if (catSelModal) catSelModal.classList.add('hidden');
     filters = { search: '', rarity: '', tags: [] };
     const unitSearch = document.getElementById('unit-search');
     if (unitSearch) unitSearch.value = '';

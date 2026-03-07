@@ -798,9 +798,10 @@ body {
     padding-top: 0 !important;
 }
 
-/* Page 4: NO scroll */
+/* Page 4: NO scroll, raise content */
 #page-4 {
     overflow: hidden !important;
+    padding-top: 0 !important;
 }
 
 /* helper: add/remove this class via JS to lock page scroll */
@@ -2145,10 +2146,10 @@ body {
 /* Category title — clean, no glow */
 .p2-title-wrap h2 {
     font-family: 'Cinzel', serif !important;
-    font-size: 1.6rem !important;
+    font-size: clamp(.85rem, 3.5vw, 1.3rem) !important;
     font-weight: 700 !important;
     color: #ffffff !important;
-    letter-spacing: 2px !important;
+    letter-spacing: 1.5px !important;
     line-height: 1 !important;
     margin: 0 !important;
     text-shadow: none !important;
@@ -2688,11 +2689,11 @@ img {
     }
     /* Back button (panah kiri) geser lebih ke kanan */
     .back-to-2.nav-btn-circle {
-        margin-left: 28px !important;
+        margin-left: 60px !important;
     }
     /* Home button geser lebih ke kiri */
     .back-to-1.nav-btn-circle {
-        margin-right: 28px !important;
+        margin-right: 60px !important;
     }
 }
 
