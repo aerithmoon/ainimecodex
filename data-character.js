@@ -13,7 +13,11 @@ var DATA_CHARACTER = [
     extra_image_2: "data image/EMERALD (3).png",
     extra_image_3: "data image/EMERALD (4).png",
     tags:  "Knight, Emerald, Melee",
-    story: "A legendary knight empowered by an ancient emerald gem, whose blade has never known defeat."
+    story: "A legendary knight empowered by an ancient emerald gem, whose blade has never known defeat.",
+    costumes: [
+      { name: "Shadow Jade Armor",   image: "data image/" },
+      { name: "Golden Sovereign Set", image: "data image/" }
+    ]
   },
   {
     category: "Character", season: "1",
@@ -66,7 +70,11 @@ var DATA_CHARACTER = [
     name: "Void Assassin",     nickname: "The Rift Walker",    rarity: "S",
     main_image_url: "data image/", extra_image_1: "data image/", extra_image_2: "data image/", extra_image_3: "data image/",
     tags:  "Assassin, Void, Melee",
-    story: "A killer who slips through dimensional rifts to strike from impossible angles."
+    story: "A killer who slips through dimensional rifts to strike from impossible angles.",
+    costumes: [
+      { name: "Eclipse Phantom Suit", image: "data image/" },
+      { name: "Void Emperor Cloak",   image: "data image/" }
+    ]
   },
   {
     category: "Character", season: "3",
@@ -89,7 +97,12 @@ var DATA_CHARACTER = [
     name: "Phoenix Lancer",    nickname: "Wings of Rebirth",   rarity: "S",
     main_image_url: "data image/", extra_image_1: "data image/", extra_image_2: "data image/", extra_image_3: "data image/",
     tags:  "Lancer, Fire, Mounted",
-    story: "A warrior reborn from ashes atop a phoenix, whose lance ignites at first strike."
+    story: "A warrior reborn from ashes atop a phoenix, whose lance ignites at first strike.",
+    costumes: [
+      { name: "Inferno King Armor", image: "data image/" },
+      { name: "Ashen Reaper Outfit", image: "data image/" },
+      { name: "Celestial Wings Form", image: "data image/" }
+    ]
   },
   {
     category: "Character", season: "4",

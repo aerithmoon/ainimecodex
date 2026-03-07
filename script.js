@@ -535,6 +535,18 @@ async function init() {
         if (popup) popup.classList.add('hidden');
     };
 
+    // ── COSTUME POPUP CLOSE ──
+    const closeCostumePopup = document.getElementById('close-costume-popup');
+    if (closeCostumePopup) closeCostumePopup.onclick = () => {
+        const popup = document.getElementById('costume-popup');
+        if (popup) popup.classList.add('hidden');
+    };
+    const costumePopupBackdrop = document.getElementById('costume-popup-backdrop');
+    if (costumePopupBackdrop) costumePopupBackdrop.onclick = () => {
+        const popup = document.getElementById('costume-popup');
+        if (popup) popup.classList.add('hidden');
+    };
+
     // ── SEASON APPEARANCES BUTTON (PAGE 4) ──
     // (onclick di-set ulang setiap showLegendDetail dipanggil)
 
@@ -828,6 +840,23 @@ function showLegendDetail(name) {
     if (seasonBtn) {
         seasonBtn.onclick = () => showSeasonPopup(unit.name);
     }
+
+    // ── Set up Costume Button ──
+    // Hanya muncul untuk kategori Character, Monster, Pet yang punya data costumes
+    const costumeBtn = document.getElementById('costume-btn');
+    const costumeCategories = ['character', 'monster', 'pet'];
+    const hasCostume = unit.costumes && Array.isArray(unit.costumes) && unit.costumes.length > 0;
+    const isCostumeCategory = costumeCategories.includes((unit.category || '').toLowerCase());
+
+    if (costumeBtn) {
+        if (hasCostume && isCostumeCategory) {
+            costumeBtn.classList.remove('hidden');
+            costumeBtn.onclick = () => showCostumePopup(unit);
+        } else {
+            costumeBtn.classList.add('hidden');
+            costumeBtn.onclick = null;
+        }
+    }
 }
 
 /* ═══════════════════════════════════════════════
@@ -861,6 +890,32 @@ function showSeasonPopup(unitName) {
     }
 
     const popup = document.getElementById('season-popup');
+    if (popup) popup.classList.remove('hidden');
+}
+
+/* ═══════════════════════════════════════════════
+   SHOW COSTUME POPUP
+   Tampilkan daftar costume yang dimiliki unit ini
+═══════════════════════════════════════════════ */
+function showCostumePopup(unit) {
+    const subtitleEl = document.getElementById('costume-popup-unit-name');
+    if (subtitleEl) subtitleEl.innerText = unit.name || '—';
+
+    const listEl = document.getElementById('costume-popup-list');
+    if (listEl) {
+        if (!unit.costumes || unit.costumes.length === 0) {
+            listEl.innerHTML = `<p style="opacity:.5;font-size:.75rem;letter-spacing:.08em;">DATA COSTUME TIDAK TERSEDIA</p>`;
+        } else {
+            listEl.innerHTML = unit.costumes.map(c => `
+                <div class="costume-chip">
+                    <i class="fas fa-shirt"></i>
+                    <span>${c.name || 'Unknown Costume'}</span>
+                </div>
+            `).join('');
+        }
+    }
+
+    const popup = document.getElementById('costume-popup');
     if (popup) popup.classList.remove('hidden');
 }
 

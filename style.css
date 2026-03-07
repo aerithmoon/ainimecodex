@@ -2679,30 +2679,30 @@ img {
 }
 
 /* ================================================
-   PAGE 3 — BUTTON POSITIONING
+   PAGE 4 — BUTTON POSITIONING (PRESISI SEPERTI REFRESH BTN)
    ================================================ */
 .detail-nav-static {
-    padding: 0 4px !important;
+    padding: 0 20px !important;  /* match refresh-btn: right:20px */
 }
-/* Mobile page 4 nav: nudge back btn right, home btn left */
+/* Reset margin overrides — pakai padding saja */
 .back-to-2.nav-btn-circle {
-    margin-left: 24px !important;
+    margin-left: 0 !important;
 }
 .back-to-1.nav-btn-circle {
-    margin-right: 24px !important;
+    margin-right: 0 !important;
 }
 
 @media (min-width: 1024px) {
     .detail-nav-static {
-        padding: 0 !important;
+        padding: 0 24px !important;  /* match refresh-btn desktop: right:24px */
         top: 20px !important;
     }
-    /* Back button and Home button — symmetric positions */
+    /* Back button and Home button — flush to edge like refresh btn */
     .back-to-2.nav-btn-circle {
-        margin-left: 160px !important;
+        margin-left: 0 !important;
     }
     .back-to-1.nav-btn-circle {
-        margin-right: 160px !important;
+        margin-right: 0 !important;
     }
 }
 

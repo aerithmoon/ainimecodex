@@ -86,7 +86,11 @@ var DATA_PET = [
     name: "Skydrake",          nickname: "Mini Sky Sovereign",  rarity: "S",
     main_image_url: "data image/", extra_image_1: "data image/", extra_image_2: "data image/", extra_image_3: "data image/",
     tags:  "Dragon, Wind, Rare",
-    story: "A miniature sky dragon bonded for life to its owner, capable of carrying them through storms."
+    story: "A miniature sky dragon bonded for life to its owner, capable of carrying them through storms.",
+    costumes: [
+      { name: "Starlight Saddle Skin", image: "data image/" },
+      { name: "Thunder Whelp Form",    image: "data image/" }
+    ]
   },
   {
     category: "Pet", season: "4",

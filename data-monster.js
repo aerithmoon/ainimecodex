@@ -10,7 +10,11 @@ var DATA_MONSTER = [
     name: "Shadow Drake",      nickname: "The Dark Wyrm",      rarity: "A",
     main_image_url: "data image/", extra_image_1: "data image/", extra_image_2: "data image/", extra_image_3: "data image/",
     tags:  "Dragon, Shadow, Flying",
-    story: "A shadow dragon born from the abyss, its wings blot out moonlight across entire valleys."
+    story: "A shadow dragon born from the abyss, its wings blot out moonlight across entire valleys.",
+    costumes: [
+      { name: "Crimson Abyss Scale",  image: "data image/" },
+      { name: "Phantom Wyvern Form",  image: "data image/" }
+    ]
   },
   {
     category: "Monster", season: "1",
@@ -86,7 +90,11 @@ var DATA_MONSTER = [
     name: "Thunder Titan",     nickname: "The Sky Shaker",     rarity: "S",
     main_image_url: "data image/", extra_image_1: "data image/", extra_image_2: "data image/", extra_image_3: "data image/",
     tags:  "Giant, Lightning, Boss",
-    story: "A titan from the clouds whose roar summons lightning storms across three kingdoms."
+    story: "A titan from the clouds whose roar summons lightning storms across three kingdoms.",
+    costumes: [
+      { name: "Storm King Regalia", image: "data image/" },
+      { name: "Gilded Thunder Plate", image: "data image/" }
+    ]
   },
   {
     category: "Monster", season: "4",
