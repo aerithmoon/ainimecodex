@@ -705,13 +705,31 @@ function selectRealm(cat, show = true) {
 }
 
 /* ═══════════════════════════════════════════════
+   HELPER — cek apakah kategori pakai logic kumulatif
+   (Area, Item, Magic: muncul di season X → tampil di season X ke atas)
+═══════════════════════════════════════════════ */
+const CUMULATIVE_CATS = ['area', 'item', 'magic'];
+function isCumulativeCat(cat) {
+    return CUMULATIVE_CATS.includes((cat || '').trim().toLowerCase());
+}
+
+function matchSeasonForCat(unitSeason, cat) {
+    if (isCumulativeCat(cat)) {
+        // Kumulatif: tampilkan unit yang season-nya <= currentSeason
+        return Number(unitSeason || 0) <= Number(currentSeason);
+    }
+    // Eksak: hanya season yang sama persis
+    return String(unitSeason || '').trim() === String(currentSeason).trim();
+}
+
+/* ═══════════════════════════════════════════════
    POPULATE TAGS — filter by season + category
 ═══════════════════════════════════════════════ */
 function populateTags() {
     const tags = new Set();
     rawData.filter(u =>
         (u.category || '').trim().toLowerCase() === currentCat.trim().toLowerCase() &&
-        String(u.season || '').trim() === String(currentSeason).trim()
+        matchSeasonForCat(u.season, currentCat)
     ).forEach(u => {
         if (u.tags) u.tags.split(',').forEach(t => tags.add(t.trim()));
     });
@@ -748,7 +766,7 @@ function renderArchive() {
     if (!grid) return;
 
     const filtered = rawData.filter(u => {
-        const matchSeason = String(u.season || '').trim() === String(currentSeason).trim();
+        const matchSeason = matchSeasonForCat(u.season, currentCat);
         const matchCat    = (u.category || '').trim().toLowerCase() === currentCat.trim().toLowerCase();
         const matchSearch = (u.name || '').toLowerCase().includes(filters.search || '');
         const matchRarity = filters.rarity ? (u.rarity || '').trim().toUpperCase() === filters.rarity.toUpperCase() : true;
@@ -761,7 +779,7 @@ function renderArchive() {
     if (countEl) {
         const totalInCat = rawData.filter(u =>
             (u.category || '').trim().toLowerCase() === currentCat.trim().toLowerCase() &&
-            String(u.season || '').trim() === String(currentSeason).trim()
+            matchSeasonForCat(u.season, currentCat)
         ).length;
         const showing = filtered.length;
         const isFiltered = showing < totalInCat;
