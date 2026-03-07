@@ -498,7 +498,7 @@ async function init() {
         };
     });
 
-    // ── RESET FILTERS — single click resets & closes panel ──
+    // ── RESET FILTERS — clear active states only, panel stays open ──
     const resetFilters = document.getElementById('reset-filters');
     if (resetFilters) {
         resetFilters.onclick = () => {
@@ -506,9 +506,6 @@ async function init() {
             const unitSearch2 = document.getElementById('unit-search');
             if (unitSearch2) unitSearch2.value = '';
             document.querySelectorAll('.r-chip, .t-chip').forEach(c => c.classList.remove('active'));
-            // Close filter panel immediately after reset
-            const filterPanel = document.getElementById('filter-panel');
-            if (filterPanel) filterPanel.classList.add('hidden');
             renderArchive();
         };
     }
@@ -569,7 +566,7 @@ async function init() {
             clearTimeout(navHideTimer);
             navHideTimer = setTimeout(() => {
                 nav.classList.add('nav-hidden');
-            }, 3500);
+            }, 5000);
         }
 
         function hidePage4Nav() {

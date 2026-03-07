@@ -15,47 +15,45 @@
     /* ── PAGE 2: no scroll ── */
     #page-2{overflow:hidden!important}
     #page-2 .hero-section{overflow:hidden!important;height:100vh}
-    /* Mobile: raise content toward top-center */
-    #page-2 .cat-page-inner{display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;padding:0 16px;padding-top:clamp(40px,8vh,80px);position:relative;overflow:hidden}
+    /* Mobile: raise content higher */
+    #page-2 .cat-page-inner{display:flex;flex-direction:column;align-items:center;justify-content:flex-start;height:100%;padding:0 16px;padding-top:clamp(60px,12vh,110px);position:relative;overflow:hidden}
     #page-2 .cancel-btn-new{display:none!important}
 
     /* ── PAGE 2 CENTERED LAYOUT ── */
-    .p2-center-block{display:flex;flex-direction:column;align-items:center;gap:16px;width:100%;max-width:420px;padding:0 12px;margin-top:-24px}
+    .p2-center-block{display:flex;flex-direction:column;align-items:center;gap:18px;width:100%;max-width:420px;padding:0 12px}
 
     .p2-crown{display:flex;align-items:center;gap:10px;opacity:.75}
     .p2-crown-star{font-size:1rem;color:rgba(200,170,255,.7)}
-    .p2-crown-gem{font-size:1.8rem;color:var(--accent-clr,#FF6B9D);animation:p2GemPulse 2.5s ease-in-out infinite alternate}
-    @keyframes p2GemPulse{0%{opacity:.6;transform:scale(.94);filter:drop-shadow(0 0 4px rgba(var(--accent-rgb,255,107,157),.4))}100%{opacity:1;transform:scale(1.08);filter:drop-shadow(0 0 14px rgba(var(--accent-rgb,255,107,157),.8))}}
+    .p2-crown-gem{font-size:1.8rem;color:#FF6B9D;animation:p2GemPulse 2.8s ease-in-out infinite alternate}
+    @keyframes p2GemPulse{0%{opacity:.65;transform:scale(.95)}100%{opacity:1;transform:scale(1.1)}}
 
-    /* Season label: NO box, plain gradient text only */
-    .p2-season-big{font-family:'Orbitron',sans-serif!important;font-size:clamp(2.4rem,10vw,4.5rem)!important;font-weight:900!important;background:linear-gradient(135deg,#fff 0%,rgba(var(--accent-rgb,255,107,157),1) 50%,#C9B1FF 100%)!important;-webkit-background-clip:text!important;background-clip:text!important;-webkit-text-fill-color:transparent!important;filter:drop-shadow(0 0 22px rgba(var(--accent-rgb,255,107,157),.55))!important;line-height:1!important;letter-spacing:.08em!important;text-align:center!important}
+    /* Season label: NO box, NO glow — pure gradient text */
+    .p2-season-big{font-family:'Orbitron',sans-serif!important;font-size:clamp(2.6rem,11vw,5rem)!important;font-weight:900!important;background:linear-gradient(135deg,#fff 0%,#FFB7D5 40%,#FF6B9D 65%,#C9B1FF 100%)!important;-webkit-background-clip:text!important;background-clip:text!important;-webkit-text-fill-color:transparent!important;line-height:1!important;letter-spacing:.08em!important;text-align:center!important}
 
-    .p2-tagline{font-family:'Orbitron',sans-serif;font-size:.55rem;letter-spacing:.28em;color:rgba(200,180,255,.5);text-transform:uppercase;margin-top:-4px}
+    .p2-tagline{font-family:'Orbitron',sans-serif;font-size:.55rem;letter-spacing:.28em;color:rgba(200,180,255,.5);text-transform:uppercase;margin-top:-6px}
 
+    /* Dual buttons — sakura palette to match page 1, NO box-shadow glow */
     .p2-dual-btns{display:flex;gap:14px;width:100%;justify-content:center}
-    .p2-action-btn{flex:1;max-width:155px;display:flex;flex-direction:column;align-items:center;gap:7px;padding:22px 12px 18px;border-radius:20px;cursor:pointer;transition:all .28s ease;position:relative;overflow:hidden}
-    .p2-action-btn::before{content:'';position:absolute;inset:0;border-radius:20px;opacity:0;transition:opacity .28s ease}
-    .p2-action-btn:hover::before{opacity:1}
-    .p2-btn-season{background:linear-gradient(145deg,rgba(120,60,240,.22),rgba(60,90,255,.16));border:1.5px solid rgba(150,100,255,.5);color:#fff}
-    .p2-btn-season::before{background:linear-gradient(145deg,rgba(120,60,240,.15),rgba(60,90,255,.1))}
-    .p2-btn-season:hover{border-color:rgba(170,120,255,.9);transform:translateY(-5px);box-shadow:0 0 32px rgba(130,70,255,.45),0 8px 24px rgba(0,0,0,.35)}
-    .p2-btn-cat{background:linear-gradient(145deg,rgba(var(--accent-rgb,255,107,157),.2),rgba(var(--accent-rgb,255,107,157),.1));border:1.5px solid rgba(var(--accent-rgb,255,107,157),.5);color:#fff}
-    .p2-btn-cat:hover{border-color:rgba(var(--accent-rgb,255,107,157),.95);transform:translateY(-5px);box-shadow:0 0 32px rgba(var(--accent-rgb,255,107,157),.4),0 8px 24px rgba(0,0,0,.35)}
-    .p2-action-btn i{font-size:1.9rem;margin-bottom:2px}
-    .p2-btn-season i{color:rgba(190,155,255,.9)}
-    .p2-btn-cat i{color:rgba(var(--accent-rgb,255,107,157),1)}
+    .p2-action-btn{flex:1;max-width:160px;display:flex;flex-direction:column;align-items:center;gap:7px;padding:24px 12px 20px;border-radius:20px;cursor:pointer;transition:all .28s ease;position:relative;overflow:hidden}
+    .p2-btn-season{background:linear-gradient(145deg,rgba(155,93,229,.25),rgba(155,93,229,.12));border:1.5px solid rgba(155,93,229,.55);color:#fff}
+    .p2-btn-season:hover{background:linear-gradient(145deg,rgba(155,93,229,.38),rgba(155,93,229,.22));border-color:rgba(155,93,229,.9);transform:translateY(-4px)}
+    .p2-btn-cat{background:linear-gradient(145deg,rgba(255,107,157,.22),rgba(255,107,157,.1));border:1.5px solid rgba(255,107,157,.55);color:#fff}
+    .p2-btn-cat:hover{background:linear-gradient(145deg,rgba(255,107,157,.36),rgba(255,107,157,.22));border-color:rgba(255,107,157,.9);transform:translateY(-4px)}
+    .p2-action-btn i{font-size:2rem;margin-bottom:2px}
+    .p2-btn-season i{color:rgba(201,177,255,.95)}
+    .p2-btn-cat i{color:rgba(255,183,213,.95)}
     .p2-btn-name{font-family:'Orbitron',sans-serif;font-size:.62rem;font-weight:800;letter-spacing:.18em}
     .p2-btn-sub{font-family:'Orbitron',sans-serif;font-size:.55rem;opacity:.5;letter-spacing:.1em}
 
     /* HOME text button below dual btns */
-    .p2-home-btn{display:flex;align-items:center;gap:7px;background:transparent;border:1px solid rgba(255,255,255,.18);border-radius:50px;padding:9px 26px;color:rgba(255,255,255,.6);font-family:'Orbitron',sans-serif;font-size:.6rem;font-weight:700;letter-spacing:.2em;cursor:pointer;transition:all .22s ease;text-transform:uppercase}
+    .p2-home-btn{display:flex;align-items:center;gap:7px;background:transparent;border:1px solid rgba(255,255,255,.18);border-radius:50px;padding:10px 28px;color:rgba(255,255,255,.6);font-family:'Orbitron',sans-serif;font-size:.6rem;font-weight:700;letter-spacing:.2em;cursor:pointer;transition:all .22s ease;text-transform:uppercase}
     .p2-home-btn i{font-size:.75rem}
     .p2-home-btn:hover{background:rgba(255,255,255,.08);border-color:rgba(255,255,255,.4);color:rgba(255,255,255,.9)}
 
-    .p2-rune-strip{display:flex;gap:14px;align-items:center;margin-top:2px}
-    .p2-rune{font-size:.88rem;color:rgba(200,170,255,.35);animation:p2RuneFloat 3s ease-in-out infinite alternate}
-    .p2-rune.r1{animation-delay:0s}.p2-rune.r2{animation-delay:.25s;color:rgba(var(--accent-rgb,255,107,157),.35)}.p2-rune.r3{animation-delay:.5s}.p2-rune.r4{animation-delay:.75s;color:rgba(200,170,255,.35)}.p2-rune.r5{animation-delay:1s}.p2-rune.r6{animation-delay:1.25s;color:rgba(var(--accent-rgb,255,107,157),.35)}
-    @keyframes p2RuneFloat{0%{opacity:.25;transform:translateY(2px)}100%{opacity:.65;transform:translateY(-2px)}}
+    .p2-rune-strip{display:flex;gap:14px;align-items:center}
+    .p2-rune{font-size:.88rem;color:rgba(200,170,255,.3);animation:p2RuneFloat 3s ease-in-out infinite alternate}
+    .p2-rune.r1{animation-delay:0s}.p2-rune.r2{animation-delay:.25s;color:rgba(255,107,157,.3)}.p2-rune.r3{animation-delay:.5s}.p2-rune.r4{animation-delay:.75s;color:rgba(200,170,255,.3)}.p2-rune.r5{animation-delay:1s}.p2-rune.r6{animation-delay:1.25s;color:rgba(255,107,157,.3)}
+    @keyframes p2RuneFloat{0%{opacity:.2;transform:translateY(2px)}100%{opacity:.6;transform:translateY(-2px)}}
 
     /* Category Select Modal */
     .catsel-content{max-width:420px;text-align:center}
@@ -65,14 +63,14 @@
     #page-4{overflow:hidden!important}
 
     /* ── PAGE 4 nav: slide transition ── */
-    .detail-nav-static{transition:transform 0.45s cubic-bezier(0.165,0.84,0.44,1),opacity 0.45s ease!important}
+    .detail-nav-static{transition:transform 0.5s cubic-bezier(0.165,0.84,0.44,1),opacity 0.5s ease!important}
     .detail-nav-static.nav-hidden{transform:translateY(-90px)!important;opacity:0!important;pointer-events:none!important}
 
-    /* ── PAGE 4 SEASON BUTTON: unified icon + label ── */
+    /* ── PAGE 4 SEASON BUTTON: no glow ── */
     .unit-season-section{margin-top:8px}
-    .season-appearances-btn{display:flex;align-items:center;justify-content:center;gap:12px;width:100%;padding:16px 20px;background:linear-gradient(135deg,rgba(140,80,255,.18),rgba(80,130,255,.18));border:1px solid rgba(160,120,255,.35);border-radius:12px;color:#fff;cursor:pointer;transition:all .2s ease}
-    .season-appearances-btn:hover{background:linear-gradient(135deg,rgba(140,80,255,.32),rgba(80,130,255,.32));border-color:rgba(160,120,255,.65);transform:translateY(-1px)}
-    .season-appearances-btn i{font-size:1.4rem;color:rgba(190,150,255,.9)}
+    .season-appearances-btn{display:flex;align-items:center;justify-content:center;gap:12px;width:100%;padding:16px 20px;background:rgba(155,93,229,.14);border:1px solid rgba(155,93,229,.38);border-radius:12px;color:#fff;cursor:pointer;transition:all .2s ease}
+    .season-appearances-btn:hover{background:rgba(155,93,229,.24);border-color:rgba(155,93,229,.6);transform:translateY(-2px)}
+    .season-appearances-btn i{font-size:1.4rem;color:rgba(201,177,255,.9)}
     .season-btn-label{font-family:'Orbitron',sans-serif;font-size:.72rem;font-weight:800;letter-spacing:.2em;color:rgba(210,180,255,.95)}
 
     /* ── SEASON SELECT POPUP (PAGE 1) ── */
@@ -155,12 +153,12 @@
                     <!-- 2 Action Buttons -->
                     <div class="p2-dual-btns">
                         <button id="p2-season-btn" class="p2-action-btn p2-btn-season">
-                            <i class="fas fa-book-open"></i>
+                            <i class="fas fa-scroll"></i>
                             <span class="p2-btn-name">SEASON</span>
                             <span class="p2-btn-sub" id="p2-season-num-display">S1</span>
                         </button>
                         <button id="p2-category-btn" class="p2-action-btn p2-btn-cat">
-                            <i class="fas fa-star"></i>
+                            <i class="fas fa-wand-magic-sparkles"></i>
                             <span class="p2-btn-name">CATEGORY</span>
                             <span class="p2-btn-sub">SELECT</span>
                         </button>
@@ -264,7 +262,7 @@
                 <!-- SEASON SECTION — single unified button -->
                 <div class="unit-gallery unit-season-section">
                     <button id="season-appearances-btn" class="season-appearances-btn">
-                        <i class="fas fa-book-open"></i>
+                        <i class="fas fa-scroll"></i>
                         <span class="season-btn-label">SEASON</span>
                     </button>
                 </div>
