@@ -1,11 +1,14 @@
 /* CONSOLIDATED RPG SCRIPT SYSTEM - REVISED */
 
 const CONFIG = {
-    csvUrl: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTIz5r4BkhocZryD6Ju2UGYVWyEKXAvhhqS94Hm6-yMyegyjQM-MV6j0-mDnujDN72oLjPNCyfBlUsZ/pub?gid=0&single=true&output=csv',
     categories: ['Character', 'Monster', 'Pet', 'Item', 'Magic', 'Area']
 };
 
 let rawData = [];
+
+
+
+
 let currentCat = localStorage.getItem('currentCat') || 'Character';
 let filters = { search: '', rarity: '', tags: [] };
 let lastScrollY = 0;
@@ -160,32 +163,19 @@ const UI = {
 
 async function loadRealmData() {
     try {
-        if (CONFIG.csvUrl.includes('S1p_S1p')) {
-            rawData = getMockArchive();
-        } else {
-            // Timeout 8 detik — kalau tidak ada response, fallback ke mock data
-            const controller = new AbortController();
-            const timeout = setTimeout(() => controller.abort(), 8000);
+        // Gabungkan semua 6 file data kategori
+        const all = [
+            ...(typeof DATA_CHARACTER !== 'undefined' ? DATA_CHARACTER : []),
+            ...(typeof DATA_MONSTER   !== 'undefined' ? DATA_MONSTER   : []),
+            ...(typeof DATA_PET       !== 'undefined' ? DATA_PET       : []),
+            ...(typeof DATA_ITEM      !== 'undefined' ? DATA_ITEM      : []),
+            ...(typeof DATA_MAGIC     !== 'undefined' ? DATA_MAGIC     : []),
+            ...(typeof DATA_AREA      !== 'undefined' ? DATA_AREA      : [])
+        ].filter(e => e.name && e.name.trim() !== ''); // buang entry kosong
 
-            const response = await fetch(CONFIG.csvUrl, {
-                signal: controller.signal
-            });
-            clearTimeout(timeout);
-
-            const csvText = await response.text();
-            rawData = parseCSV(csvText);
-            console.log('=== CSV FETCH SUCCESS ===');
-            console.log('Rows loaded:', rawData.length);
-            if (rawData.length > 0) console.log('First row:', rawData[0]);
-
-            // Kalau data kosong/gagal parse, fallback ke mock
-            if (!rawData || rawData.length === 0) {
-                console.warn('Data kosong! Fallback ke mock data.');
-                rawData = getMockArchive();
-            }
-        }
+        rawData = all.length > 0 ? all : getMockArchive();
     } catch (e) {
-        console.error("Data Sync Failed:", e);
+        console.error('Data Load Failed:', e);
         rawData = getMockArchive();
     }
     return rawData;
@@ -327,16 +317,18 @@ async function init() {
     if (patchBtn) {
         patchBtn.onclick = () => {
             const patchTextEl = document.getElementById('patch-text');
-            if (patchTextEl) patchTextEl.innerHTML = `
-                <strong>UPDATE v1.0.8 - REVISED</strong><br><br>
-                - New Unique Wallpapers for every category.<br>
-                - Modern Loading Animation (0-100%).<br>
-                - Auto-hide navigation on scroll down.<br>
-                - Persistent page state on refresh.<br>
-                - Fixed contrast for subtitle and version text.<br>
-                - Removed all glowing effects for a cleaner look.<br><br>
-                <em>System fully optimized.</em>
-            `;
+            if (patchTextEl) {
+                patchTextEl.innerHTML = `
+                    <strong>UPDATE v1.0.8 - REVISED</strong><br><br>
+                    - Wallpaper unik baru untuk setiap kategori.<br>
+                    - Animasi loading modern (0-100%).<br>
+                    - Navigasi otomatis tersembunyi saat scroll ke bawah.<br>
+                    - Status halaman tetap tersimpan saat refresh.<br>
+                    - Perbaikan kontras teks subtitle dan versi.<br>
+                    - Semua efek cahaya dihapus untuk tampilan lebih bersih.<br><br>
+                    <em>Sistem telah dioptimalkan sepenuhnya.</em>
+                `;
+            }
             if (UI.patchModal) UI.patchModal.classList.remove('hidden');
         };
     }
@@ -425,6 +417,8 @@ async function init() {
 
     setInterval(() => UI.updateClock(), 1000);
     UI.updateClock();
+
+    // Apply translations on load — REMOVED (translate feature dihapus)
 
     // ── BUTTON REQUEST hanya muncul di page-1 — dikelola oleh showPage() ──
     // JANGAN set display di sini agar tidak override logic showPage()
@@ -551,10 +545,14 @@ function populateTags() {
     const container = document.getElementById('dynamic-tags');
     if (!container) return;
     container.innerHTML = '';
-    tags.forEach(tag => {
+
+    const rawTagArr = Array.from(tags);
+
+    rawTagArr.forEach((tag) => {
         const span = document.createElement('span');
         span.className = 't-chip';
         span.innerText = tag;
+        span.dataset.rawTag = tag;
         span.onclick = () => {
             if (span.classList.contains('active')) {
                 span.classList.remove('active');
@@ -572,18 +570,7 @@ function populateTags() {
 function renderArchive() {
     const grid = document.getElementById('unit-grid');
     if (!grid) return;
-
-    // DEBUG — cek isi rawData di console
-    console.log('=== DEBUG rawData ===');
-    console.log('Total data:', rawData.length);
-    console.log('Current category:', currentCat);
-    if (rawData.length > 0) {
-        console.log('Sample row:', rawData[0]);
-        console.log('Semua kategori di data:', [...new Set(rawData.map(u => u.category))]);
-    }
-
     const filtered = rawData.filter(u => {
-        // FIX: case-insensitive + trim whitespace supaya ga mismatch
         const matchCat = (u.category || '').trim().toLowerCase() === currentCat.trim().toLowerCase();
         const matchSearch = (u.name || '').toLowerCase().includes(filters.search || '');
         const matchRarity = filters.rarity ? (u.rarity || '').trim().toUpperCase() === filters.rarity.toUpperCase() : true;
@@ -634,20 +621,27 @@ function showLegendDetail(name) {
     const rarityBadge = document.getElementById('detail-rarity-badge');
     if (rarityBadge) rarityBadge.innerText = unit.rarity || '';
     const detailName = document.getElementById('detail-name');
-    if (detailName) detailName.innerText = unit.name || '';
+    if (detailName) detailName.innerText = unit.name || ''; // Name tidak ditranslate
+
     const detailNick = document.getElementById('detail-nickname');
-    if (detailNick) detailNick.innerText = unit.nickname ? `"${unit.nickname}"` : "";
     const detailStory = document.getElementById('detail-story');
-    if (detailStory) detailStory.innerText = unit.story || '';
     const tagContainer = document.getElementById('detail-tags-container');
-    if (tagContainer) tagContainer.innerHTML = unit.tags ? unit.tags.split(',').map(t => `<span class="tag" onclick="jumpToTag('${t.trim().replace(/'/g, "\\'")}')">${t.trim()}</span>`).join('') : '';
+
+    // Show page first (no delay for user)
+    UI.showPage('page-3');
+
+    // Set original content
+    if (detailNick) detailNick.innerText = unit.nickname ? `"${unit.nickname}"` : "";
+    if (detailStory) detailStory.innerText = unit.story || '';
+    const rawTags = unit.tags ? unit.tags.split(',').map(t => t.trim()).filter(Boolean) : [];
+    if (tagContainer) tagContainer.innerHTML = rawTags.map(t => `<span class="tag" onclick="jumpToTag('${t.replace(/'/g, "\\'")}')">${t}</span>`).join('');
+
     const track = document.getElementById('carousel-track');
     if (track) {
         const images = [unit.extra_image_1, unit.extra_image_2, unit.extra_image_3].filter(Boolean);
         const activeIndex = Math.max(0, Math.min(images.length - 1, Math.floor(images.length / 2)));
         track.innerHTML = images.map((img, i) => `<img class="extra-img ${i === activeIndex ? 'active' : ''}" src="${img}" onclick="UI.handleCarousel(this)">`).join('');
     }
-    UI.showPage('page-3');
 }
 
 function jumpToTag(tag) {
@@ -657,7 +651,9 @@ function jumpToTag(tag) {
     filters.tags = [tag];
     renderArchive();
     document.querySelectorAll('.t-chip').forEach(c => {
-        if (c.innerText === tag) c.classList.add('active');
+        // Match by raw tag (dataset) or innerText fallback
+        const rawTag = c.dataset.rawTag || c.innerText;
+        if (rawTag === tag) c.classList.add('active');
         else c.classList.remove('active');
     });
 }
