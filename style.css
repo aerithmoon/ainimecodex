@@ -289,7 +289,7 @@ body {
         radial-gradient(ellipse 55%  40% at 100% 60%, rgba(0, 187, 249, 0.25)  0%, transparent 60%),
         radial-gradient(ellipse 65%  50% at 50%  105%, rgba(0, 245, 212, 0.2)  0%, transparent 55%),
         linear-gradient(160deg, #0d0620 0%, #120828 45%, #0a0318 75%, #0f0a1e 100%) !important;
-    overflow-y: auto !important;
+    overflow: hidden !important;
 }
 
 /* Animated blob decorations */
@@ -792,10 +792,15 @@ body {
 #page-1 { padding-top: 0 !important; }
 #page-1 .hero-section { padding-top: 0; justify-content: flex-start; }
 
-/* Page 2 SELALU allow scroll */
+/* Page 2: NO scroll on page itself */
 #page-2 {
-    overflow-y: auto !important;
+    overflow: hidden !important;
     padding-top: 0 !important;
+}
+
+/* Page 4: NO scroll */
+#page-4 {
+    overflow: hidden !important;
 }
 
 /* helper: add/remove this class via JS to lock page scroll */
@@ -2030,8 +2035,7 @@ body {
    ════════════════════════════════════════════════════ */
 
 /* ── BACKGROUND: Aurora Kosmik ── */
-#page-2 {
-    background:
+#page-2-KEEPBG {
         radial-gradient(ellipse 120% 60% at 50% -10%, rgba(90, 10, 200, 0.45) 0%, transparent 60%),
         radial-gradient(ellipse 70%  55% at -10% 50%, rgba(180, 0, 100, 0.25) 0%, transparent 60%),
         radial-gradient(ellipse 65%  50% at 110% 60%, rgba(10, 80, 220, 0.25) 0%, transparent 60%),

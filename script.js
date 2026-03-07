@@ -57,11 +57,10 @@ const UI = {
         
         // Reset scroll nav state for page-4 (detail page)
         if (pageId === 'page-4') {
-            const nav = document.querySelector('.detail-nav-static');
-            if (nav) {
-                nav.classList.remove('nav-hidden');
-                lastScrollY = 0;
-            }
+            // Show nav then auto-hide after 2 seconds
+            setTimeout(() => {
+                if (window._startPage4NavTimer) window._startPage4NavTimer();
+            }, 100);
         }
     },
 
@@ -225,35 +224,31 @@ async function startLoadingAnimation() {
    POPULATE SEASON GRID (PAGE 1)
    Derivasikan season dari rawData secara dinamis
 ═══════════════════════════════════════════════ */
-function populateSeasonGrid() {
-    const seasons = [...new Set(rawData.map(u => u.season).filter(s => s && s.trim() !== ''))]
-        .sort((a, b) => Number(a) - Number(b));
+/* ═══════════════════════════════════════════════
+   SEASON COLORS & ICONS
+═══════════════════════════════════════════════ */
+const SEASON_COLORS = [
+    '#FF5252','#FF9800','#FFD700','#4CAF50',
+    '#5B86E5','#9C6FE4','#FF4DB8','#00BCD4',
+    '#E8B84B','#76FF03','#F06292','#4DD0E1'
+];
+const SEASON_ICONS = ['✦','◈','✧','★','◆','✦','◈','✧','★','◆','✦','◈'];
 
-    const grid = document.getElementById('season-grid');
+function getAvailableSeasons() {
+    return [...new Set(rawData.map(u => u.season).filter(s => s && s.trim() !== ''))]
+        .sort((a, b) => Number(a) - Number(b));
+}
+
+function populateSeasonGrid() {
+    // Populate season-select-modal grid (page 1)
+    const seasons = getAvailableSeasons();
+    const grid = document.getElementById('season-select-grid');
     if (!grid) return;
 
-    // Warna bergantian untuk kartu season
-    const colors = [
-        '#FF5252','#FF9800','#FFD700','#4CAF50',
-        '#5B86E5','#9C6FE4','#FF4DB8','#00BCD4',
-        '#E8B84B','#76FF03','#F06292','#4DD0E1'
-    ];
-    const icons = ['✦','◈','✧','★','◆','✦','◈','✧','★','◆','✦','◈'];
-
-    if (seasons.length === 0) {
-        // Fallback: tidak ada data season, tampilkan Season 1
-        grid.innerHTML = `
-            <div class="season-card" data-season="1" style="--clr:#9C6FE4" onclick="selectSeason('1')">
-                <div class="s-icon">✦</div>
-                <div class="s-num">1</div>
-                <div class="s-label">SEASON</div>
-            </div>`;
-        return;
-    }
-
-    grid.innerHTML = seasons.map((s, i) => `
-        <div class="season-card" data-season="${s}" style="--clr:${colors[i % colors.length]}" onclick="selectSeason('${s}')">
-            <div class="s-icon">${icons[i % icons.length]}</div>
+    const fallback = seasons.length === 0 ? ['1'] : seasons;
+    grid.innerHTML = fallback.map((s, i) => `
+        <div class="season-pick-card" data-season="${s}" style="--clr:${SEASON_COLORS[i % SEASON_COLORS.length]}" onclick="selectSeason('${s}')">
+            <div class="s-icon">${SEASON_ICONS[i % SEASON_ICONS.length]}</div>
             <div class="s-num">${s}</div>
             <div class="s-label">SEASON</div>
         </div>
@@ -263,27 +258,54 @@ function populateSeasonGrid() {
 /* ═══════════════════════════════════════════════
    SELECT SEASON — goes to page-2 (category pick)
 ═══════════════════════════════════════════════ */
-function selectSeason(season) {
+function selectSeason(season, fromModal) {
     currentSeason = String(season);
     localStorage.setItem('currentSeason', currentSeason);
 
-    // Update label di page-2 header
+    // Close any season modal
+    const selModal = document.getElementById('season-select-modal');
+    if (selModal) selModal.classList.add('hidden');
+    const chgModal = document.getElementById('season-change-modal');
+    if (chgModal) chgModal.classList.add('hidden');
+
+    // Update all season labels
+    updateSeasonLabels();
+
+    // Navigate to page-2 if coming from page-1
+    if (!fromModal) {
+        UI.showPage('page-2');
+    }
+}
+
+function updateSeasonLabels() {
     const label = document.getElementById('cat-season-label');
     if (label) label.innerText = `SEASON ${currentSeason}`;
+    const p2num = document.getElementById('p2-season-num-display');
+    if (p2num) p2num.innerText = `S${currentSeason}`;
+}
 
-    // Sembunyikan season-grid & tombol cancel, tampilkan kembali buttons page-1
-    const seasonGrid = document.getElementById('season-grid');
-    if (seasonGrid) seasonGrid.classList.add('hidden');
-    const cancelBtn = document.getElementById('cancel-season-btn');
-    if (cancelBtn) cancelBtn.classList.add('hidden');
-    const startBtn = document.getElementById('start-btn');
-    if (startBtn) startBtn.classList.remove('hidden');
-    const patchBtn = document.getElementById('patch-btn');
-    if (patchBtn) patchBtn.classList.remove('hidden');
-    const verText = document.querySelector('.patch-ver-text');
-    if (verText) verText.classList.remove('hidden');
+function openSeasonSelectModal() {
+    // For page 1 - ENTER WORLD
+    populateSeasonGrid();
+    const modal = document.getElementById('season-select-modal');
+    if (modal) modal.classList.remove('hidden');
+}
 
-    UI.showPage('page-2');
+function openSeasonChangeModal() {
+    // For page 2 & 3 - change season button
+    const seasons = getAvailableSeasons();
+    const fallback = seasons.length === 0 ? ['1'] : seasons;
+    const listEl = document.getElementById('season-change-list');
+    if (listEl) {
+        listEl.innerHTML = fallback.map(s => `
+            <div class="season-chip ${String(s) === String(currentSeason) ? 'active' : ''}"
+                 onclick="selectSeason('${s}', true); if(document.getElementById('page-3').classList.contains('active')){renderArchive();}">
+                SEASON ${s}
+            </div>
+        `).join('');
+    }
+    const modal = document.getElementById('season-change-modal');
+    if (modal) modal.classList.remove('hidden');
 }
 
 async function init() {
@@ -318,9 +340,8 @@ async function init() {
     const lastPage = localStorage.getItem('lastPage') || 'page-1';
     const lastUnit = localStorage.getItem('lastUnit');
 
-    // Update season label untuk page-2
-    const catLabel = document.getElementById('cat-season-label');
-    if (catLabel) catLabel.innerText = `SEASON ${currentSeason}`;
+    // Update all season labels
+    updateSeasonLabels();
 
     if (lastPage === 'page-4' && lastUnit) {
         selectRealm(currentCat, false);
@@ -334,35 +355,45 @@ async function init() {
         UI.showPage('page-1');
     }
 
-    // ── START BUTTON: tampilkan season-grid ──
+    // ── START BUTTON: buka season popup ──
     const startBtn = document.getElementById('start-btn');
     if (startBtn) {
-        startBtn.onclick = () => {
-            startBtn.classList.add('hidden');
-            const patchBtn = document.getElementById('patch-btn');
-            if (patchBtn) patchBtn.classList.add('hidden');
-            const verText = document.querySelector('.patch-ver-text');
-            if (verText) verText.classList.add('hidden');
-            const seasonGrid = document.getElementById('season-grid');
-            if (seasonGrid) seasonGrid.classList.remove('hidden');
-            const cancelBtn = document.getElementById('cancel-season-btn');
-            if (cancelBtn) cancelBtn.classList.remove('hidden');
+        startBtn.onclick = () => openSeasonSelectModal();
+    }
+
+    // ── CLOSE SEASON SELECT MODAL ──
+    const closeSeasonSelect = document.getElementById('close-season-select');
+    if (closeSeasonSelect) {
+        closeSeasonSelect.onclick = () => {
+            const modal = document.getElementById('season-select-modal');
+            if (modal) modal.classList.add('hidden');
+        };
+    }
+    const seasonSelectBackdrop = document.getElementById('season-select-backdrop');
+    if (seasonSelectBackdrop) {
+        seasonSelectBackdrop.onclick = () => {
+            const modal = document.getElementById('season-select-modal');
+            if (modal) modal.classList.add('hidden');
         };
     }
 
-    // ── CANCEL SEASON BUTTON ──
-    const cancelSeasonBtn = document.getElementById('cancel-season-btn');
-    if (cancelSeasonBtn) {
-        cancelSeasonBtn.onclick = () => {
-            const startBtn2 = document.getElementById('start-btn');
-            if (startBtn2) startBtn2.classList.remove('hidden');
-            const patchBtn2 = document.getElementById('patch-btn');
-            if (patchBtn2) patchBtn2.classList.remove('hidden');
-            const verText = document.querySelector('.patch-ver-text');
-            if (verText) verText.classList.remove('hidden');
-            const seasonGrid = document.getElementById('season-grid');
-            if (seasonGrid) seasonGrid.classList.add('hidden');
-            cancelSeasonBtn.classList.add('hidden');
+    // ── SEASON CHANGE MODAL (page 2 & 3) ──
+    const p2SeasonBtn = document.getElementById('p2-season-btn');
+    if (p2SeasonBtn) p2SeasonBtn.onclick = () => openSeasonChangeModal();
+    const p3SeasonBtn = document.getElementById('p3-season-btn');
+    if (p3SeasonBtn) p3SeasonBtn.onclick = () => openSeasonChangeModal();
+    const closeSeasonChange = document.getElementById('close-season-change');
+    if (closeSeasonChange) {
+        closeSeasonChange.onclick = () => {
+            const modal = document.getElementById('season-change-modal');
+            if (modal) modal.classList.add('hidden');
+        };
+    }
+    const seasonChangeBackdrop = document.getElementById('season-change-backdrop');
+    if (seasonChangeBackdrop) {
+        seasonChangeBackdrop.onclick = () => {
+            const modal = document.getElementById('season-change-modal');
+            if (modal) modal.classList.add('hidden');
         };
     }
 
@@ -500,24 +531,37 @@ async function init() {
     setInterval(() => UI.updateClock(), 1000);
     UI.updateClock();
 
-    // ── SCROLL HANDLER PAGE 4 (detail) — auto hide/show nav ──
-    const page4 = document.getElementById('page-4');
-    if (page4) {
-        page4.addEventListener('scroll', () => {
-            const currentScrollY = page4.scrollTop;
+    // ── PAGE 4 NAV: Auto-hide after 2s, show on tap ──
+    (function setupPage4Nav() {
+        let navHideTimer = null;
+
+        function showPage4Nav() {
             const nav = document.querySelector('.detail-nav-static');
             if (!nav) return;
-
-            if (Math.abs(currentScrollY - lastScrollY) < 5) return;
-
-            if (currentScrollY > lastScrollY && currentScrollY > 50) {
+            nav.classList.remove('nav-hidden');
+            clearTimeout(navHideTimer);
+            navHideTimer = setTimeout(() => {
                 nav.classList.add('nav-hidden');
-            } else {
-                nav.classList.remove('nav-hidden');
-            }
-            lastScrollY = currentScrollY;
-        }, { passive: true });
-    }
+            }, 2000);
+        }
+
+        function hidePage4Nav() {
+            const nav = document.querySelector('.detail-nav-static');
+            if (nav) nav.classList.add('nav-hidden');
+            clearTimeout(navHideTimer);
+        }
+
+        // Tap / click anywhere on page-4 to show nav
+        const page4 = document.getElementById('page-4');
+        if (page4) {
+            page4.addEventListener('click', showPage4Nav, { passive: true });
+            page4.addEventListener('touchstart', showPage4Nav, { passive: true });
+        }
+
+        // Auto-start hide timer when page-4 is shown (exposed via global)
+        window._startPage4NavTimer = showPage4Nav;
+        window._stopPage4NavTimer = hidePage4Nav;
+    })();
 
     // ── ANTI SCREENSHOT / SCREEN RECORD ──
     const getBlocker = () => document.getElementById('ss-blocker');
@@ -689,13 +733,23 @@ function renderArchive() {
         </div>
     `).join('');
 
-    /* Selalu aktifkan scroll page-3 */
+    /* Aktifkan scroll page-3 hanya jika konten melebihi layar */
     (function adjustPage3Scroll() {
         try {
             const page3 = document.getElementById('page-3');
             if (!page3) return;
-            page3.classList.remove('no-scroll');
-            page3.style.overflowY = 'auto';
+            requestAnimationFrame(() => {
+                const container = page3.querySelector('.page-container');
+                const contentH = container ? container.scrollHeight : grid.scrollHeight;
+                const viewH = page3.clientHeight || window.innerHeight;
+                if (contentH > viewH - 20) {
+                    page3.classList.remove('no-scroll');
+                    page3.style.overflowY = 'auto';
+                } else {
+                    page3.classList.add('no-scroll');
+                    page3.style.overflowY = 'hidden';
+                }
+            });
         } catch (e) { /* silent */ }
     })();
 }
@@ -787,9 +841,8 @@ function navigateToSeason(season, unitName) {
     currentSeason = String(season);
     localStorage.setItem('currentSeason', currentSeason);
 
-    // Update label di page-2 juga
-    const label = document.getElementById('cat-season-label');
-    if (label) label.innerText = `SEASON ${currentSeason}`;
+    // Update all labels
+    updateSeasonLabels();
 
     // Tutup popup
     const popup = document.getElementById('season-popup');
