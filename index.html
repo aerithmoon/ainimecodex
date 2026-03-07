@@ -91,6 +91,16 @@
     .costume-popup-list{display:flex;flex-direction:column;gap:10px;max-height:260px;overflow-y:auto;padding-right:4px}
     .costume-chip{display:flex;align-items:center;gap:12px;padding:12px 16px;background:rgba(255,107,157,.1);border:1px solid rgba(255,107,157,.3);border-radius:10px;font-family:'Orbitron',sans-serif;font-size:.68rem;font-weight:700;letter-spacing:.12em;color:rgba(255,200,220,.95)}
     .costume-chip i{color:rgba(255,183,213,.8);font-size:.9rem}
+    /* Bisa diklik (punya gambar) */
+    .costume-chip-clickable{cursor:pointer;border-color:rgba(255,107,157,.5);transition:all .2s ease}
+    .costume-chip-clickable:hover{background:rgba(255,107,157,.22);border-color:rgba(255,107,157,.85);transform:translateX(4px)}
+    .costume-chip-eye{margin-left:auto !important;font-size:.75rem !important;opacity:.7}
+    /* Belum ada gambar */
+    .costume-chip-no-img{opacity:.55;cursor:default}
+    .costume-chip-soon{margin-left:auto;font-size:.55rem;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.18);border-radius:4px;padding:2px 6px;letter-spacing:.1em;color:rgba(255,255,255,.4)}
+    .costume-chip-name{flex:1}
+    /* Viewer label (nama costume di atas gambar) */
+    .viewer-label{font-family:'Orbitron',sans-serif;font-size:.72rem;font-weight:800;letter-spacing:.2em;color:rgba(255,200,220,.95);text-align:center;margin-bottom:10px;text-transform:uppercase}
     /* Desktop: stack vertically */
     @media(min-width:1024px){
         .unit-action-row{flex-direction:column !important}
@@ -409,6 +419,7 @@
 
     <div id="image-viewer" class="viewer-overlay hidden">
         <span class="close-viewer">&times;</span>
+        <div id="viewer-label" class="viewer-label" style="display:none"></div>
         <img id="viewer-img" src="">
     </div>
 
