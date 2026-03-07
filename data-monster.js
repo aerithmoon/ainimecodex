@@ -9,6 +9,7 @@ var DATA_MONSTER = [
 
   {
     category: "Monster",
+    season: "1",                               // isi nomor season: "1" / "2" / "3" / dst
     name: "Shadow Drake",
     nickname: "The Dark Wyrm",
     rarity: "A",                              // S / A / B / C / D
@@ -24,6 +25,7 @@ var DATA_MONSTER = [
 
   {
     category: "Monster",
+    season: "",                               // isi nomor season: "1" / "2" / "3" / dst
     name: "",
     nickname: "",
     rarity: "",

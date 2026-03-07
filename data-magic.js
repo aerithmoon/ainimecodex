@@ -9,6 +9,7 @@ var DATA_MAGIC = [
 
   {
     category: "Magic",
+    season: "1",                               // isi nomor season: "1" / "2" / "3" / dst
     name: "Inferno Blast",
     nickname: "The Flame of Destruction",
     rarity: "A",                              // S / A / B / C / D
@@ -24,6 +25,7 @@ var DATA_MAGIC = [
 
   {
     category: "Magic",
+    season: "",                               // isi nomor season: "1" / "2" / "3" / dst
     name: "",
     nickname: "",
     rarity: "",

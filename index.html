@@ -4,24 +4,57 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>ANIME FANTASY RPG - UNIT EXPLORER</title>
-    
-    <!-- CSS FILE -->
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="style-wallpapers.css">
-    
-    <!-- ICONS & FONTS -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@700;900&family=Cinzel:wght@700&family=Exo+2:wght@300;400;600;800&family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+    /* SEASON GRID PAGE 1 */
+    #season-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(110px,1fr));gap:12px;width:100%;max-width:560px;margin:20px auto 0;padding:0 8px}
+    #season-grid.hidden{display:none}
+    .season-card{background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.12);border-radius:14px;padding:18px 10px 14px;cursor:pointer;text-align:center;transition:transform 0.2s ease,background 0.2s ease,border-color 0.2s ease;color:#fff;position:relative;overflow:hidden}
+    .season-card::before{content:'';position:absolute;inset:0;background:radial-gradient(circle at 50% 0%,var(--clr,#9C6FE4),transparent 70%);opacity:.12;transition:opacity .2s ease}
+    .season-card:hover{background:rgba(255,255,255,.1);border-color:var(--clr,#9C6FE4);transform:translateY(-3px)}
+    .season-card:hover::before{opacity:.22}
+    .season-card .s-icon{font-size:1.4rem;margin-bottom:6px;color:var(--clr,#9C6FE4)}
+    .season-card .s-num{font-family:'Orbitron',sans-serif;font-size:1.25rem;font-weight:800;color:var(--clr,#fff);line-height:1}
+    .season-card .s-label{font-size:.58rem;letter-spacing:.15em;opacity:.5;margin-top:5px;text-transform:uppercase}
+    /* PAGE 2 CATEGORY */
+    #page-2 .hero-section{overflow-y:auto}
+    #page-2 .cat-page-inner{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100%;padding:24px 16px 40px;position:relative}
+    #page-2 .cat-page-topbar{display:flex;align-items:center;width:100%;max-width:540px;margin-bottom:24px}
+    #page-2 .cat-page-back{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.14);border-radius:50%;width:40px;height:40px;display:flex;align-items:center;justify-content:center;color:#fff;cursor:pointer;font-size:.85rem;flex-shrink:0;transition:background .2s}
+    #page-2 .cat-page-back:hover{background:rgba(255,255,255,.14)}
+    #page-2 .cat-page-heading{flex:1;text-align:center}
+    #page-2 .cat-season-badge{font-family:'Orbitron',sans-serif;font-size:.62rem;letter-spacing:.22em;opacity:.55;margin-bottom:3px}
+    #page-2 .cat-page-title{font-family:'Cinzel Decorative',serif;font-size:clamp(1rem,4vw,1.45rem);margin:0;background:linear-gradient(135deg,#fff 30%,rgba(200,160,255,.9));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+    #page-2 .cat-page-spacer{width:40px;flex-shrink:0}
+    #page-2 .category-grid{max-width:540px;width:100%;position:relative}
+    #page-2 .cancel-btn-new{display:none!important}
+    /* SEASON BUTTON PAGE 4 */
+    .unit-season-section{margin-top:8px}
+    .season-appearances-btn{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;padding:14px 20px;background:linear-gradient(135deg,rgba(140,80,255,.18),rgba(80,130,255,.18));border:1px solid rgba(160,120,255,.35);border-radius:12px;color:#fff;font-family:'Orbitron',sans-serif;font-size:.72rem;letter-spacing:.12em;cursor:pointer;transition:all .2s ease;text-transform:uppercase}
+    .season-appearances-btn:hover{background:linear-gradient(135deg,rgba(140,80,255,.32),rgba(80,130,255,.32));border-color:rgba(160,120,255,.65);transform:translateY(-1px)}
+    .season-appearances-btn i{font-size:1rem;color:rgba(190,150,255,.9)}
+    /* SEASON POPUP */
+    .season-popup-content{max-width:360px;text-align:center}
+    .season-popup-content h3{margin-bottom:4px}
+    .season-popup-subtitle{font-size:.68rem;opacity:.5;letter-spacing:.1em;margin-bottom:14px;text-transform:uppercase}
+    .season-popup-list{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;padding:4px 0 14px}
+    .season-chip{background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.18);border-radius:10px;padding:10px 18px;cursor:pointer;color:#fff;font-family:'Orbitron',sans-serif;font-size:.68rem;letter-spacing:.1em;transition:all .2s ease}
+    .season-chip:hover{background:rgba(160,100,255,.18);border-color:rgba(160,120,255,.5)}
+    .season-chip.active{background:rgba(160,100,255,.28);border-color:rgba(160,120,255,.75);color:rgb(210,175,255);font-weight:700}
+    .season-chip.active::after{content:' ✦';opacity:.7}
+    </style>
 </head>
 <body class="theme-character">
 
-    <!-- TOP HUD: RPG STYLE -->
     <div id="top-hud">
         <div id="system-clock">00:00:00</div>
         <div id="system-date">20 FEB 2026</div>
     </div>
 
-    <!-- PAGE 1: WORLD MAP (OPENING) -->
+    <!-- PAGE 1: SEASON SELECTION -->
     <section id="page-1" class="page active no-scroll">
         <div class="hero-section">
             <div class="floating-decorations">
@@ -30,58 +63,75 @@
             </div>
             <div class="hero-content">
                 <h1 class="rpg-title">AINIME GALLERY</h1>
-                
                 <div class="p1-btns">
                     <button id="start-btn" class="rpg-btn glow">ENTER WORLD</button>
                 </div>
-
                 <p class="rpg-subtitle">Dive into the World of Legends. Choose your destiny.</p>
                 <p class="rpg-flavor-text">Ancient legends are waiting for your command. Explore the archives and find your path.</p>
-                
                 <div class="p1-btns">
                     <button id="patch-btn" class="rpg-btn-outline">PATCH NOTES</button>
                     <span class="patch-ver-text">v1.0.8</span>
                 </div>
             </div>
-            
-            <div id="category-grid" class="category-grid hidden">
-                <button id="cancel-cat-btn" class="cancel-btn-new"><i class="fas fa-times-circle"></i></button>
-                <div class="cat-card" data-category="Character" style="--clr:#FF5252">
-                    <div class="cat-icon"><i class="fas fa-shield-halved"></i></div>
-                    <span class="cat-name">CHARACTER</span>
+            <div id="season-grid" class="hidden">
+                <!-- Dynamically populated by JS -->
+            </div>
+            <button id="cancel-season-btn" class="cancel-btn-new hidden"><i class="fas fa-times-circle"></i></button>
+        </div>
+    </section>
+
+    <!-- PAGE 2: CATEGORY SELECTION (NEW) -->
+    <section id="page-2" class="page">
+        <div class="hero-section">
+            <div class="floating-decorations">
+                <div class="circle-1"></div>
+                <div class="circle-2"></div>
+            </div>
+            <div class="cat-page-inner">
+                <div class="cat-page-topbar">
+                    <button class="cat-page-back back-to-1"><i class="fas fa-chevron-left"></i></button>
+                    <div class="cat-page-heading">
+                        <div class="cat-season-badge" id="cat-season-label">SEASON 1</div>
+                        <h1 class="cat-page-title">SELECT CATEGORY</h1>
+                    </div>
+                    <div class="cat-page-spacer"></div>
                 </div>
-                <div class="cat-card" data-category="Monster" style="--clr:#9C6FE4">
-                    <div class="cat-icon"><i class="fas fa-dragon"></i></div>
-                    <span class="cat-name">MONSTER</span>
-                </div>
-                <div class="cat-card" data-category="Pet" style="--clr:#FF4DB8">
-                    <div class="cat-icon"><i class="fas fa-paw"></i></div>
-                    <span class="cat-name">PET</span>
-                </div>
-                <div class="cat-card" data-category="Item" style="--clr:#4CAF50">
-                    <div class="cat-icon"><i class="fas fa-gem"></i></div>
-                    <span class="cat-name">ITEM</span>
-                </div>
-                <div class="cat-card" data-category="Magic" style="--clr:#5B86E5">
-                    <div class="cat-icon"><i class="fas fa-wand-sparkles"></i></div>
-                    <span class="cat-name">MAGIC</span>
-                </div>
-                <div class="cat-card" data-category="Area" style="--clr:#E8B84B">
-                    <div class="cat-icon"><i class="fas fa-map-location-dot"></i></div>
-                    <span class="cat-name">AREA</span>
+                <div class="category-grid">
+                    <div class="cat-card" data-category="Character" style="--clr:#FF5252">
+                        <div class="cat-icon"><i class="fas fa-shield-halved"></i></div>
+                        <span class="cat-name">CHARACTER</span>
+                    </div>
+                    <div class="cat-card" data-category="Monster" style="--clr:#9C6FE4">
+                        <div class="cat-icon"><i class="fas fa-dragon"></i></div>
+                        <span class="cat-name">MONSTER</span>
+                    </div>
+                    <div class="cat-card" data-category="Pet" style="--clr:#FF4DB8">
+                        <div class="cat-icon"><i class="fas fa-paw"></i></div>
+                        <span class="cat-name">PET</span>
+                    </div>
+                    <div class="cat-card" data-category="Item" style="--clr:#4CAF50">
+                        <div class="cat-icon"><i class="fas fa-gem"></i></div>
+                        <span class="cat-name">ITEM</span>
+                    </div>
+                    <div class="cat-card" data-category="Magic" style="--clr:#5B86E5">
+                        <div class="cat-icon"><i class="fas fa-wand-sparkles"></i></div>
+                        <span class="cat-name">MAGIC</span>
+                    </div>
+                    <div class="cat-card" data-category="Area" style="--clr:#E8B84B">
+                        <div class="cat-icon"><i class="fas fa-map-location-dot"></i></div>
+                        <span class="cat-name">AREA</span>
+                    </div>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- PAGE 2: ARCHIVE (LIST) -->
-    <section id="page-2" class="page">
+    <!-- PAGE 3: ARCHIVE LIST (was PAGE 2) -->
+    <section id="page-3" class="page">
         <div class="page-container">
-
-            <!-- STICKY HEADER -->
             <header class="rpg-header">
                 <div class="p2-topbar">
-                    <button class="p2-back-btn back-to-1" title="Back">
+                    <button class="p2-back-btn back-to-2" title="Back">
                         <i class="fas fa-chevron-left"></i>
                     </button>
                     <div class="p2-title-wrap">
@@ -91,7 +141,6 @@
                         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
                     </button>
                 </div>
-
                 <div class="p2-search-row">
                     <div class="p2-search-box">
                         <i class="fas fa-magnifying-glass"></i>
@@ -101,7 +150,6 @@
                         <i class="fas fa-sliders"></i>
                     </button>
                 </div>
-
                 <div id="filter-panel" class="filter-panel hidden">
                     <div class="filter-section">
                         <label>RARITY</label>
@@ -119,28 +167,22 @@
                     </div>
                     <button id="reset-filters" class="rpg-btn-small"><i class="fas fa-trash-can"></i></button>
                 </div>
-
-                <!-- Count bar -->
                 <div class="p2-count-bar">
                     <span class="p2-count-dot"></span>
                     <span id="p2-count-text">Loading...</span>
                 </div>
             </header>
-
-            <div id="unit-grid" class="unit-grid">
-                <!-- Populated by JS -->
-            </div>
+            <div id="unit-grid" class="unit-grid"></div>
         </div>
     </section>
 
-    <!-- PAGE 3: LEGENDARY DETAIL -->
-    <section id="page-3" class="page">
+    <!-- PAGE 4: LEGENDARY DETAIL (was PAGE 3) -->
+    <section id="page-4" class="page">
         <div class="page-container detail-view">
             <div class="detail-nav-static">
-                <button class="nav-btn-circle back-to-2"><i class="fas fa-arrow-left"></i></button>
+                <button class="nav-btn-circle back-to-3"><i class="fas fa-arrow-left"></i></button>
                 <button class="nav-btn-circle back-to-1"><i class="fas fa-house"></i></button>
             </div>
-
             <div class="detail-layout">
                 <div class="unit-visual">
                     <div class="image-frame">
@@ -148,41 +190,33 @@
                         <div id="detail-rarity-badge">S</div>
                     </div>
                 </div>
-
                 <div class="unit-bio">
                     <h1 id="detail-name">LEGEND NAME</h1>
                     <h3 id="detail-nickname">"THE TITLE"</h3>
-                    
-                    <div id="detail-tags-container" class="detail-tags">
-                        <!-- Tags -->
-                    </div>
-
+                    <div id="detail-tags-container" class="detail-tags"></div>
                     <div class="rpg-box story-box">
                         <div class="box-header">LORE / STORY</div>
                         <p id="detail-story">Ancient texts tell of a hero...</p>
                     </div>
                 </div>
-
-                <div class="unit-gallery">
-                    <h4 class="gallery-title">GALLERY</h4>
-                    <div class="carousel">
-                        <div id="carousel-track" class="carousel-track">
-                            <!-- Extra Images -->
-                        </div>
-                    </div>
+                <!-- SEASON SECTION — replaces old gallery -->
+                <div class="unit-gallery unit-season-section">
+                    <h4 class="gallery-title">SEASON</h4>
+                    <button id="season-appearances-btn" class="season-appearances-btn">
+                        <i class="fas fa-calendar-alt"></i>
+                        <span>LIHAT KEMUNCULAN SEASON</span>
+                    </button>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- MODALS & OVERLAYS -->
+    <!-- MODALS -->
     <div id="category-modal" class="rpg-modal hidden">
         <div class="modal-backdrop"></div>
         <div class="modal-content">
             <h3>SELECT REALM</h3>
-            <div id="mini-cat-list" class="mini-cat-list">
-                <!-- Populated dynamically to hide current cat -->
-            </div>
+            <div id="mini-cat-list" class="mini-cat-list"></div>
             <button id="close-modal" class="rpg-btn-small">CLOSE</button>
         </div>
     </div>
@@ -198,12 +232,22 @@
         </div>
     </div>
 
+    <!-- SEASON POPUP -->
+    <div id="season-popup" class="rpg-modal hidden">
+        <div class="modal-backdrop" id="season-popup-backdrop"></div>
+        <div class="modal-content season-popup-content">
+            <h3>APPEARANCES</h3>
+            <p class="season-popup-subtitle" id="season-popup-unit-name">—</p>
+            <div id="season-popup-list" class="season-popup-list"></div>
+            <button id="close-season-popup" class="rpg-btn-small">CLOSE</button>
+        </div>
+    </div>
+
     <div id="image-viewer" class="viewer-overlay hidden">
         <span class="close-viewer">&times;</span>
         <img id="viewer-img" src="">
     </div>
 
-    <!-- CALENDAR MODAL -->
     <div id="calendar-modal" class="rpg-modal hidden">
         <div class="modal-backdrop"></div>
         <div class="modal-content calendar-content">
@@ -220,7 +264,6 @@
         </div>
     </div>
 
-    <!-- BOTTOM CONTROLS -->
     <div class="bottom-controls">
         <button id="request-btn" title="Request Hero" onclick="window.open('https://forms.gle/amrnSNVnpYFJtqrHA')">
             <i class="fas fa-paper-plane"></i>
@@ -232,8 +275,6 @@
     </div>
 
     <div id="loading-screen" class="loading-overlay">
-
-        <!-- FANTASY LOADING SCREEN — CLEAN VERSION -->
         <div class="ld-bg"></div>
         <div class="ld-nebula n1"></div>
         <div class="ld-nebula n2"></div>
@@ -241,42 +282,29 @@
         <div class="ld-stars s1"></div>
         <div class="ld-stars s2"></div>
         <div class="ld-stars s3"></div>
-
-        <!-- Geometric mandala motif -->
         <div class="ld-mandala-wrap">
             <svg class="ld-mandala" viewBox="0 0 300 300" xmlns="http://www.w3.org/2000/svg">
-                <!-- Outer dashed circle -->
                 <circle cx="150" cy="150" r="140" fill="none" stroke="rgba(160,100,255,0.25)" stroke-width="1" stroke-dasharray="6 10"/>
-                <!-- Octagon -->
-                <polygon points="150,12 232,52 272,135 232,218 150,258 68,218 28,135 68,52"
-                    fill="none" stroke="rgba(100,180,255,0.3)" stroke-width="1"/>
-                <!-- Inner hex -->
-                <polygon points="150,45 220,87 220,172 150,214 80,172 80,87"
-                    fill="none" stroke="rgba(255,120,200,0.25)" stroke-width="1"/>
-                <!-- 8-petal flower lines -->
-                <line x1="150" y1="10"  x2="150" y2="290" stroke="rgba(160,100,255,0.15)" stroke-width="0.8"/>
-                <line x1="10"  y1="150" x2="290" y2="150" stroke="rgba(160,100,255,0.15)" stroke-width="0.8"/>
-                <line x1="43"  y1="43"  x2="257" y2="257" stroke="rgba(100,180,255,0.12)" stroke-width="0.8"/>
-                <line x1="257" y1="43"  x2="43"  y2="257" stroke="rgba(100,180,255,0.12)" stroke-width="0.8"/>
-                <!-- Small decorative diamonds at corners -->
+                <polygon points="150,12 232,52 272,135 232,218 150,258 68,218 28,135 68,52" fill="none" stroke="rgba(100,180,255,0.3)" stroke-width="1"/>
+                <polygon points="150,45 220,87 220,172 150,214 80,172 80,87" fill="none" stroke="rgba(255,120,200,0.25)" stroke-width="1"/>
+                <line x1="150" y1="10" x2="150" y2="290" stroke="rgba(160,100,255,0.15)" stroke-width="0.8"/>
+                <line x1="10" y1="150" x2="290" y2="150" stroke="rgba(160,100,255,0.15)" stroke-width="0.8"/>
+                <line x1="43" y1="43" x2="257" y2="257" stroke="rgba(100,180,255,0.12)" stroke-width="0.8"/>
+                <line x1="257" y1="43" x2="43" y2="257" stroke="rgba(100,180,255,0.12)" stroke-width="0.8"/>
                 <polygon points="150,18 156,26 150,34 144,26" fill="rgba(200,150,255,0.5)"/>
                 <polygon points="282,150 274,156 266,150 274,144" fill="rgba(150,200,255,0.5)"/>
                 <polygon points="150,282 156,274 150,266 144,274" fill="rgba(255,150,200,0.5)"/>
                 <polygon points="18,150 26,156 34,150 26,144" fill="rgba(255,200,100,0.5)"/>
-                <!-- Dot accents on hex corners -->
-                <circle cx="150" cy="45"  r="3" fill="rgba(255,180,255,0.6)"/>
-                <circle cx="220" cy="87"  r="3" fill="rgba(150,230,255,0.6)"/>
+                <circle cx="150" cy="45" r="3" fill="rgba(255,180,255,0.6)"/>
+                <circle cx="220" cy="87" r="3" fill="rgba(150,230,255,0.6)"/>
                 <circle cx="220" cy="172" r="3" fill="rgba(255,200,100,0.6)"/>
                 <circle cx="150" cy="214" r="3" fill="rgba(180,255,180,0.6)"/>
-                <circle cx="80"  cy="172" r="3" fill="rgba(255,130,200,0.6)"/>
-                <circle cx="80"  cy="87"  r="3" fill="rgba(180,150,255,0.6)"/>
-                <!-- Inner circle detail -->
+                <circle cx="80" cy="172" r="3" fill="rgba(255,130,200,0.6)"/>
+                <circle cx="80" cy="87" r="3" fill="rgba(180,150,255,0.6)"/>
                 <circle cx="150" cy="150" r="55" fill="none" stroke="rgba(255,200,255,0.2)" stroke-width="1" stroke-dasharray="3 6"/>
                 <circle cx="150" cy="150" r="30" fill="none" stroke="rgba(200,160,255,0.2)" stroke-width="1"/>
             </svg>
         </div>
-
-        <!-- Portal rings (dinaikkan posisinya) -->
         <div class="ld-portal-wrap">
             <div class="ld-portal-ring r1"></div>
             <div class="ld-portal-ring r2"></div>
@@ -289,15 +317,11 @@
             <div class="ld-rune rn5">✦</div>
             <div class="ld-rune rn6">◈</div>
         </div>
-
-        <!-- Magic orbs -->
         <div class="ld-orb o1"></div>
         <div class="ld-orb o2"></div>
         <div class="ld-orb o3"></div>
         <div class="ld-orb o4"></div>
         <div class="ld-orb o5"></div>
-
-        <!-- Subtle sparkles only -->
         <div class="ld-sparkles">
             <span class="sp sp1">✦</span>
             <span class="sp sp3">✧</span>
@@ -307,8 +331,6 @@
             <span class="sp sp9">✦</span>
             <span class="sp sp12">★</span>
         </div>
-
-        <!-- Bottom info panel -->
         <div class="loading-content-wrapper">
             <div class="loading-info-panel">
                 <div class="loading-title">✦ AINIME GALLERY ✦</div>
@@ -329,13 +351,9 @@
         </div>
     </div>
 
-    <!-- LANGUAGE TOGGLE BUTTON -->
     <button id="lang-toggle-btn" title="Ganti Bahasa / Change Language">ID</button>
-
-    <!-- ANTI SCREENSHOT BLOCKER OVERLAY -->
     <div id="ss-blocker"></div>
 
-    <!-- SCRIPT FILE -->
     <script src="data-character.js"></script>
     <script src="data-monster.js"></script>
     <script src="data-pet.js"></script>
@@ -344,7 +362,6 @@
     <script src="data-area.js"></script>
     <script src="script.js"></script>
     <script>
-    // ── FORCE DARK MODE ALWAYS ──
     document.documentElement.setAttribute('data-theme', 'dark');
     localStorage.setItem('theme', 'dark');
     </script>

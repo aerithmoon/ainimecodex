@@ -9,6 +9,7 @@ var DATA_ITEM = [
 
   {
     category: "Item",
+    season: "1",                               // isi nomor season: "1" / "2" / "3" / dst
     name: "Void Crystal",
     nickname: "Crystal of Nothingness",
     rarity: "S",                              // S / A / B / C / D
@@ -24,6 +25,7 @@ var DATA_ITEM = [
 
   {
     category: "Item",
+    season: "",                               // isi nomor season: "1" / "2" / "3" / dst
     name: "",
     nickname: "",
     rarity: "",

@@ -9,6 +9,7 @@ var DATA_CHARACTER = [
 
   {
     category: "Character",
+    season: "1",                               // isi nomor season: "1" / "2" / "3" / dst
     name: "Emerald Knight",
     nickname: "The Jade Sword",
     rarity: "S",                              // S / A / B / C / D
@@ -24,6 +25,7 @@ var DATA_CHARACTER = [
 
   {
     category: "Character",
+    season: "",                               // isi nomor season: "1" / "2" / "3" / dst
     name: "",
     nickname: "",
     rarity: "",

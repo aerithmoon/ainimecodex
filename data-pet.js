@@ -9,6 +9,7 @@ var DATA_PET = [
 
   {
     category: "Pet",
+    season: "1",                               // isi nomor season: "1" / "2" / "3" / dst
     name: "Glowfox",
     nickname: "The Radiant Fox",
     rarity: "B",                              // S / A / B / C / D
@@ -24,6 +25,7 @@ var DATA_PET = [
 
   {
     category: "Pet",
+    season: "",                               // isi nomor season: "1" / "2" / "3" / dst
     name: "",
     nickname: "",
     rarity: "",

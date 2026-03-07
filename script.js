@@ -6,9 +6,7 @@ const CONFIG = {
 
 let rawData = [];
 
-
-
-
+let currentSeason = localStorage.getItem('currentSeason') || '1';
 let currentCat = localStorage.getItem('currentCat') || 'Character';
 let filters = { search: '', rarity: '', tags: [] };
 let lastScrollY = 0;
@@ -46,7 +44,6 @@ const UI = {
         const reqBtn = document.getElementById('request-btn');
         
         if (pageId === 'page-1') {
-            // Hanya tampilkan HUD jika loading sudah benar-benar selesai (classList.contains('hidden'))
             const loadingEl = document.getElementById('loading-screen');
             const loadingDone = loadingEl && loadingEl.classList.contains('hidden');
             if (hud) hud.style.display = loadingDone ? 'flex' : 'none';
@@ -58,8 +55,8 @@ const UI = {
             if (reqBtn) reqBtn.style.display = 'none';
         }
         
-        // Reset scroll nav state for page 3
-        if (pageId === 'page-3') {
+        // Reset scroll nav state for page-4 (detail page)
+        if (pageId === 'page-4') {
             const nav = document.querySelector('.detail-nav-static');
             if (nav) {
                 nav.classList.remove('nav-hidden');
@@ -130,40 +127,11 @@ const UI = {
         document.documentElement.setAttribute('data-theme', next);
         localStorage.setItem('theme', next);
         if (this.themeToggle) this.themeToggle.innerHTML = next === 'dark' ? '<i class="fas fa-moon"></i>' : '<i class="fas fa-sun"></i>';
-    },
-
-    handleCarousel(el) {
-        const track = document.getElementById('carousel-track');
-        if (!track) return;
-        const imgs = Array.from(track.querySelectorAll('.extra-img'));
-        
-        // If the clicked image is already the focused one -> open viewer
-        if (el.classList.contains('active')) {
-            if (this.viewerImg) this.viewerImg.src = el.src;
-            if (this.viewer) this.viewer.classList.remove('hidden');
-            return;
-        }
-
-        const index = imgs.indexOf(el);
-
-        // Safe rotation logic: only rotate if 3+ images; handle 2 images gracefully
-        if (imgs.length >= 3) {
-            if (index === 0) track.insertBefore(imgs[imgs.length - 1], imgs[0]);
-            else if (index === 2) track.appendChild(imgs[0]);
-        } else if (imgs.length === 2) {
-            // swap positions if first clicked; no crash if index calculation weird
-            if (index === 0) track.appendChild(imgs[0]);
-        }
-
-        const newImgs = Array.from(track.querySelectorAll('.extra-img'));
-        newImgs.forEach(img => img.classList.remove('active'));
-        if (newImgs[1]) newImgs[1].classList.add('active');
     }
 };
 
 async function loadRealmData() {
     try {
-        // Gabungkan semua 6 file data kategori
         const all = [
             ...(typeof DATA_CHARACTER !== 'undefined' ? DATA_CHARACTER : []),
             ...(typeof DATA_MONSTER   !== 'undefined' ? DATA_MONSTER   : []),
@@ -171,7 +139,7 @@ async function loadRealmData() {
             ...(typeof DATA_ITEM      !== 'undefined' ? DATA_ITEM      : []),
             ...(typeof DATA_MAGIC     !== 'undefined' ? DATA_MAGIC     : []),
             ...(typeof DATA_AREA      !== 'undefined' ? DATA_AREA      : [])
-        ].filter(e => e.name && e.name.trim() !== ''); // buang entry kosong
+        ].filter(e => e.name && e.name.trim() !== '');
 
         rawData = all.length > 0 ? all : getMockArchive();
     } catch (e) {
@@ -186,7 +154,6 @@ function parseCSV(csv) {
     if (lines.length === 0) return [];
     const headers = lines[0].split(',').map(h => h.trim().toLowerCase().replace(/ /g, '_'));
     return lines.slice(1).map(line => {
-        // Handle koma di dalam tanda kutip (tags/story yang mengandung koma)
         const values = [];
         let current = '';
         let inQuotes = false;
@@ -215,10 +182,16 @@ function getMockArchive() {
         'https://images.unsplash.com/photo-1552820728-8b83bb6b773f?w=400&h=600&fit=crop',
         'https://images.unsplash.com/photo-1511512578047-dfb367046420?w=400&h=600&fit=crop'
     ];
-    CONFIG.categories.forEach(cat => {
+    // Mock data tersebar di 3 season
+    CONFIG.categories.forEach((cat, catIdx) => {
         for (let i = 1; i <= 3; i++) {
+            // Season assignment: variasi per kategori agar tidak semua sama
+            const seasonNum = ((catIdx + i - 1) % 3) + 1;
             data.push({
-                category: cat, name: `${cat} Legend ${i}`, nickname: `Title of ${cat}`,
+                season: String(seasonNum),
+                category: cat,
+                name: `${cat} Legend ${i}`,
+                nickname: `Title of ${cat} ${i}`,
                 rarity: ['S', 'A', 'B', 'C', 'D'][Math.floor(Math.random() * 5)],
                 main_image_url: images[i-1] || images[0],
                 extra_image_1: 'https://picsum.photos/400/400?random=1',
@@ -248,23 +221,91 @@ async function startLoadingAnimation() {
     });
 }
 
+/* ═══════════════════════════════════════════════
+   POPULATE SEASON GRID (PAGE 1)
+   Derivasikan season dari rawData secara dinamis
+═══════════════════════════════════════════════ */
+function populateSeasonGrid() {
+    const seasons = [...new Set(rawData.map(u => u.season).filter(s => s && s.trim() !== ''))]
+        .sort((a, b) => Number(a) - Number(b));
+
+    const grid = document.getElementById('season-grid');
+    if (!grid) return;
+
+    // Warna bergantian untuk kartu season
+    const colors = [
+        '#FF5252','#FF9800','#FFD700','#4CAF50',
+        '#5B86E5','#9C6FE4','#FF4DB8','#00BCD4',
+        '#E8B84B','#76FF03','#F06292','#4DD0E1'
+    ];
+    const icons = ['✦','◈','✧','★','◆','✦','◈','✧','★','◆','✦','◈'];
+
+    if (seasons.length === 0) {
+        // Fallback: tidak ada data season, tampilkan Season 1
+        grid.innerHTML = `
+            <div class="season-card" data-season="1" style="--clr:#9C6FE4" onclick="selectSeason('1')">
+                <div class="s-icon">✦</div>
+                <div class="s-num">1</div>
+                <div class="s-label">SEASON</div>
+            </div>`;
+        return;
+    }
+
+    grid.innerHTML = seasons.map((s, i) => `
+        <div class="season-card" data-season="${s}" style="--clr:${colors[i % colors.length]}" onclick="selectSeason('${s}')">
+            <div class="s-icon">${icons[i % icons.length]}</div>
+            <div class="s-num">${s}</div>
+            <div class="s-label">SEASON</div>
+        </div>
+    `).join('');
+}
+
+/* ═══════════════════════════════════════════════
+   SELECT SEASON — goes to page-2 (category pick)
+═══════════════════════════════════════════════ */
+function selectSeason(season) {
+    currentSeason = String(season);
+    localStorage.setItem('currentSeason', currentSeason);
+
+    // Update label di page-2 header
+    const label = document.getElementById('cat-season-label');
+    if (label) label.innerText = `SEASON ${currentSeason}`;
+
+    // Sembunyikan season-grid & tombol cancel, tampilkan kembali buttons page-1
+    const seasonGrid = document.getElementById('season-grid');
+    if (seasonGrid) seasonGrid.classList.add('hidden');
+    const cancelBtn = document.getElementById('cancel-season-btn');
+    if (cancelBtn) cancelBtn.classList.add('hidden');
+    const startBtn = document.getElementById('start-btn');
+    if (startBtn) startBtn.classList.remove('hidden');
+    const patchBtn = document.getElementById('patch-btn');
+    if (patchBtn) patchBtn.classList.remove('hidden');
+    const verText = document.querySelector('.patch-ver-text');
+    if (verText) verText.classList.remove('hidden');
+
+    UI.showPage('page-2');
+}
+
 async function init() {
     // Force dark mode only
-    document.documentElement.setAttribute("data-theme", "dark"); localStorage.setItem("theme","dark");
+    document.documentElement.setAttribute("data-theme", "dark");
+    localStorage.setItem("theme", "dark");
 
-    // ── SEMBUNYIKAN HUD (jam & tanggal) selama loading screen ──
+    // Sembunyikan HUD selama loading
     const hud = document.getElementById('top-hud');
     if (hud) hud.style.display = 'none';
     
     const dataPromise = loadRealmData();
     await startLoadingAnimation();
     await dataPromise;
+
+    // Populate season grid setelah data siap
+    populateSeasonGrid();
     
     if (UI.loading) {
         UI.loading.style.opacity = '0';
         setTimeout(() => {
             UI.loading.classList.add('hidden');
-            // Tampilkan HUD setelah loading selesai (hanya jika di page-1)
             const activePage = document.querySelector('.page.active');
             if (activePage && activePage.id === 'page-1') {
                 const hudEl = document.getElementById('top-hud');
@@ -273,19 +314,27 @@ async function init() {
         }, 500);
     }
 
+    // ── Restore halaman terakhir ──
     const lastPage = localStorage.getItem('lastPage') || 'page-1';
     const lastUnit = localStorage.getItem('lastUnit');
-    
-    if (lastPage === 'page-3' && lastUnit) {
+
+    // Update season label untuk page-2
+    const catLabel = document.getElementById('cat-season-label');
+    if (catLabel) catLabel.innerText = `SEASON ${currentSeason}`;
+
+    if (lastPage === 'page-4' && lastUnit) {
         selectRealm(currentCat, false);
         showLegendDetail(lastUnit);
-    } else if (lastPage !== 'page-1') {
+    } else if (lastPage === 'page-3') {
         selectRealm(currentCat, false);
-        UI.showPage(lastPage);
+        UI.showPage('page-3');
+    } else if (lastPage === 'page-2') {
+        UI.showPage('page-2');
     } else {
         UI.showPage('page-1');
     }
 
+    // ── START BUTTON: tampilkan season-grid ──
     const startBtn = document.getElementById('start-btn');
     if (startBtn) {
         startBtn.onclick = () => {
@@ -294,25 +343,30 @@ async function init() {
             if (patchBtn) patchBtn.classList.add('hidden');
             const verText = document.querySelector('.patch-ver-text');
             if (verText) verText.classList.add('hidden');
-            const catGrid = document.getElementById('category-grid');
-            if (catGrid) catGrid.classList.remove('hidden');
+            const seasonGrid = document.getElementById('season-grid');
+            if (seasonGrid) seasonGrid.classList.remove('hidden');
+            const cancelBtn = document.getElementById('cancel-season-btn');
+            if (cancelBtn) cancelBtn.classList.remove('hidden');
         };
     }
 
-    const cancelBtn = document.getElementById('cancel-cat-btn');
-    if (cancelBtn) {
-        cancelBtn.onclick = () => {
+    // ── CANCEL SEASON BUTTON ──
+    const cancelSeasonBtn = document.getElementById('cancel-season-btn');
+    if (cancelSeasonBtn) {
+        cancelSeasonBtn.onclick = () => {
             const startBtn2 = document.getElementById('start-btn');
             if (startBtn2) startBtn2.classList.remove('hidden');
             const patchBtn2 = document.getElementById('patch-btn');
             if (patchBtn2) patchBtn2.classList.remove('hidden');
             const verText = document.querySelector('.patch-ver-text');
             if (verText) verText.classList.remove('hidden');
-            const catGrid = document.getElementById('category-grid');
-            if (catGrid) catGrid.classList.add('hidden');
+            const seasonGrid = document.getElementById('season-grid');
+            if (seasonGrid) seasonGrid.classList.add('hidden');
+            cancelSeasonBtn.classList.add('hidden');
         };
     }
 
+    // ── PATCH NOTES BUTTON ──
     const patchBtn = document.getElementById('patch-btn');
     if (patchBtn) {
         patchBtn.onclick = () => {
@@ -325,7 +379,9 @@ async function init() {
                     - Navigasi otomatis tersembunyi saat scroll ke bawah.<br>
                     - Status halaman tetap tersimpan saat refresh.<br>
                     - Perbaikan kontras teks subtitle dan versi.<br>
-                    - Semua efek cahaya dihapus untuk tampilan lebih bersih.<br><br>
+                    - Semua efek cahaya dihapus untuk tampilan lebih bersih.<br>
+                    - Sistem Season: pilih season sebelum kategori.<br>
+                    - Gallery diganti Season Button di halaman detail.<br><br>
                     <em>Sistem telah dioptimalkan sepenuhnya.</em>
                 `;
             }
@@ -333,13 +389,17 @@ async function init() {
         };
     }
 
+    // ── CATEGORY CARDS di PAGE-2 ──
     document.querySelectorAll('.cat-card').forEach(card => {
         card.onclick = () => selectRealm(card.dataset.category);
     });
 
+    // ── BACK NAVIGATION ──
     document.querySelectorAll('.back-to-1').forEach(btn => btn.onclick = () => UI.showPage('page-1'));
     document.querySelectorAll('.back-to-2').forEach(btn => btn.onclick = () => UI.showPage('page-2'));
-    
+    document.querySelectorAll('.back-to-3').forEach(btn => btn.onclick = () => UI.showPage('page-3'));
+
+    // ── FILTER BUTTON (PAGE 3) ──
     const filterBtn = document.getElementById('filter-btn');
     if (filterBtn) {
         filterBtn.onclick = () => {
@@ -348,6 +408,7 @@ async function init() {
         };
     }
 
+    // ── QUICK CHANGE CATEGORY (PAGE 3) ──
     const quickBtn = document.getElementById('quick-change-btn');
     if (quickBtn) {
         quickBtn.onclick = () => {
@@ -361,6 +422,7 @@ async function init() {
         };
     }
 
+    // ── SEARCH INPUT (PAGE 3) ──
     const unitSearch = document.getElementById('unit-search');
     if (unitSearch) {
         unitSearch.oninput = (e) => {
@@ -369,6 +431,7 @@ async function init() {
         };
     }
 
+    // ── RARITY CHIPS (PAGE 3) ──
     document.querySelectorAll('.r-chip').forEach(chip => {
         chip.onclick = () => {
             if (chip.classList.contains('active')) { chip.classList.remove('active'); filters.rarity = ''; }
@@ -380,6 +443,7 @@ async function init() {
         };
     });
 
+    // ── RESET FILTERS ──
     const resetFilters = document.getElementById('reset-filters');
     if (resetFilters) {
         resetFilters.onclick = () => {
@@ -391,6 +455,7 @@ async function init() {
         };
     }
 
+    // ── MODAL CLOSE BUTTONS ──
     const closeModalBtn = document.getElementById('close-modal');
     if (closeModalBtn) closeModalBtn.onclick = () => UI.modal.classList.add('hidden');
     const closePatchBtn = document.getElementById('close-patch');
@@ -398,8 +463,25 @@ async function init() {
     const closeViewerBtn = document.querySelector('.close-viewer');
     if (closeViewerBtn) closeViewerBtn.onclick = () => UI.viewer.classList.add('hidden');
 
+    // ── SEASON POPUP CLOSE ──
+    const closeSeasonPopup = document.getElementById('close-season-popup');
+    if (closeSeasonPopup) closeSeasonPopup.onclick = () => {
+        const popup = document.getElementById('season-popup');
+        if (popup) popup.classList.add('hidden');
+    };
+    const seasonPopupBackdrop = document.getElementById('season-popup-backdrop');
+    if (seasonPopupBackdrop) seasonPopupBackdrop.onclick = () => {
+        const popup = document.getElementById('season-popup');
+        if (popup) popup.classList.add('hidden');
+    };
+
+    // ── SEASON APPEARANCES BUTTON (PAGE 4) ──
+    // (onclick di-set ulang setiap showLegendDetail dipanggil)
+
+    // ── REFRESH BUTTON ──
     if (UI.refreshBtn) UI.refreshBtn.onclick = () => UI.handleRefresh();
-    
+
+    // ── CALENDAR ──
     let calendarDate = new Date();
     if (UI.date) {
         UI.date.onclick = () => {
@@ -418,16 +500,11 @@ async function init() {
     setInterval(() => UI.updateClock(), 1000);
     UI.updateClock();
 
-    // Apply translations on load — REMOVED (translate feature dihapus)
-
-    // ── BUTTON REQUEST hanya muncul di page-1 — dikelola oleh showPage() ──
-    // JANGAN set display di sini agar tidak override logic showPage()
-
-    // SCROLL HANDLER FOR PAGE 3 - AUTO HIDE/SHOW NAV
-    const page3 = document.getElementById('page-3');
-    if (page3) {
-        page3.addEventListener('scroll', () => {
-            const currentScrollY = page3.scrollTop;
+    // ── SCROLL HANDLER PAGE 4 (detail) — auto hide/show nav ──
+    const page4 = document.getElementById('page-4');
+    if (page4) {
+        page4.addEventListener('scroll', () => {
+            const currentScrollY = page4.scrollTop;
             const nav = document.querySelector('.detail-nav-static');
             if (!nav) return;
 
@@ -442,10 +519,9 @@ async function init() {
         }, { passive: true });
     }
 
-    // ── ANTI SCREENSHOT / SCREEN RECORD — DESKTOP + MOBILE ──
+    // ── ANTI SCREENSHOT / SCREEN RECORD ──
     const getBlocker = () => document.getElementById('ss-blocker');
 
-    // 1. Desktop: Block PrintScreen key
     document.addEventListener('keyup', (e) => {
         if (e.key === 'PrintScreen' || e.keyCode === 44) {
             if (navigator.clipboard && navigator.clipboard.writeText) {
@@ -459,7 +535,6 @@ async function init() {
         }
     });
 
-    // 2. Desktop: Block screenshot keyboard combos
     document.addEventListener('keydown', (e) => {
         if ((e.ctrlKey || e.metaKey) && e.shiftKey && (e.key === 'S' || e.key === 's')) {
             e.preventDefault(); e.stopPropagation();
@@ -467,7 +542,6 @@ async function init() {
         if (e.key === 'PrintScreen') e.preventDefault();
     });
 
-    // 3. MOBILE + DESKTOP: Intercept window blur (home button, screenshot gesture, app switch)
     window.addEventListener('blur', () => {
         const blocker = getBlocker();
         if (blocker) {
@@ -482,7 +556,6 @@ async function init() {
         }
     });
 
-    // 4. visibilitychange (Android / tab switch / screen record detection)
     document.addEventListener('visibilitychange', () => {
         const blocker = getBlocker();
         if (!blocker) return;
@@ -494,7 +567,6 @@ async function init() {
         }
     });
 
-    // 5. iOS / Android: pagehide (background mode detection)
     window.addEventListener('pagehide', () => {
         const blocker = getBlocker();
         if (blocker) blocker.style.display = 'block';
@@ -504,13 +576,11 @@ async function init() {
         if (blocker) setTimeout(() => { blocker.style.display = 'none'; }, 500);
     });
 
-    // 6. iOS screenshot detection via resize (screenshot often triggers resize on iOS)
     let _lastW = window.innerWidth, _lastH = window.innerHeight;
     window.addEventListener('resize', () => {
         const dw = Math.abs(window.innerWidth - _lastW);
         const dh = Math.abs(window.innerHeight - _lastH);
         _lastW = window.innerWidth; _lastH = window.innerHeight;
-        // Small resize (< 50px) while not rotating = possible screenshot UI trigger
         if (dw < 50 && dh < 50 && dw + dh > 0) {
             const blocker = getBlocker();
             if (blocker) {
@@ -521,12 +591,18 @@ async function init() {
     });
 }
 
+/* ═══════════════════════════════════════════════
+   SELECT REALM (CATEGORY) — goes to page-3
+═══════════════════════════════════════════════ */
 function selectRealm(cat, show = true) {
     currentCat = cat;
     localStorage.setItem('currentCat', cat);
     document.body.className = `theme-${cat.toLowerCase()}`;
+
+    // Title: "S1 · CHARACTER"
     const titleEl = document.getElementById('category-title');
-    if (titleEl) titleEl.innerText = cat.toUpperCase();
+    if (titleEl) titleEl.innerText = `S${currentSeason} · ${cat.toUpperCase()}`;
+
     if (UI.modal) UI.modal.classList.add('hidden');
     filters = { search: '', rarity: '', tags: [] };
     const unitSearch = document.getElementById('unit-search');
@@ -534,20 +610,26 @@ function selectRealm(cat, show = true) {
     document.querySelectorAll('.r-chip').forEach(c => c.classList.remove('active'));
     populateTags();
     renderArchive();
-    if (show) UI.showPage('page-2');
+    if (show) UI.showPage('page-3');
 }
 
+/* ═══════════════════════════════════════════════
+   POPULATE TAGS — filter by season + category
+═══════════════════════════════════════════════ */
 function populateTags() {
     const tags = new Set();
-    rawData.filter(u => (u.category || '').trim().toLowerCase() === currentCat.trim().toLowerCase()).forEach(u => {
+    rawData.filter(u =>
+        (u.category || '').trim().toLowerCase() === currentCat.trim().toLowerCase() &&
+        String(u.season || '').trim() === String(currentSeason).trim()
+    ).forEach(u => {
         if (u.tags) u.tags.split(',').forEach(t => tags.add(t.trim()));
     });
+
     const container = document.getElementById('dynamic-tags');
     if (!container) return;
     container.innerHTML = '';
 
     const rawTagArr = Array.from(tags);
-
     rawTagArr.forEach((tag) => {
         const span = document.createElement('span');
         span.className = 't-chip';
@@ -567,21 +649,29 @@ function populateTags() {
     });
 }
 
+/* ═══════════════════════════════════════════════
+   RENDER ARCHIVE — filter by season + category + search/rarity/tags
+═══════════════════════════════════════════════ */
 function renderArchive() {
     const grid = document.getElementById('unit-grid');
     if (!grid) return;
+
     const filtered = rawData.filter(u => {
-        const matchCat = (u.category || '').trim().toLowerCase() === currentCat.trim().toLowerCase();
+        const matchSeason = String(u.season || '').trim() === String(currentSeason).trim();
+        const matchCat    = (u.category || '').trim().toLowerCase() === currentCat.trim().toLowerCase();
         const matchSearch = (u.name || '').toLowerCase().includes(filters.search || '');
         const matchRarity = filters.rarity ? (u.rarity || '').trim().toUpperCase() === filters.rarity.toUpperCase() : true;
-        const matchTags = filters.tags && filters.tags.length > 0 ? filters.tags.every(t => u.tags && u.tags.includes(t)) : true;
-        return matchCat && matchSearch && matchRarity && matchTags;
+        const matchTags   = filters.tags && filters.tags.length > 0 ? filters.tags.every(t => u.tags && u.tags.includes(t)) : true;
+        return matchSeason && matchCat && matchSearch && matchRarity && matchTags;
     });
 
-    // Update count bar — tampil "60 Character", "20 Pet", dst
+    // Update count bar
     const countEl = document.getElementById('p2-count-text');
     if (countEl) {
-        const totalInCat = rawData.filter(u => (u.category || '').trim().toLowerCase() === currentCat.trim().toLowerCase()).length;
+        const totalInCat = rawData.filter(u =>
+            (u.category || '').trim().toLowerCase() === currentCat.trim().toLowerCase() &&
+            String(u.season || '').trim() === String(currentSeason).trim()
+        ).length;
         const showing = filtered.length;
         const isFiltered = showing < totalInCat;
         countEl.textContent = isFiltered
@@ -599,81 +689,131 @@ function renderArchive() {
         </div>
     `).join('');
 
-    /* REVISI: Selalu aktifkan scroll page-2 agar bisa scroll ketika data banyak */
-    (function adjustPage2Scroll() {
+    /* Selalu aktifkan scroll page-3 */
+    (function adjustPage3Scroll() {
         try {
-            const page2 = document.getElementById('page-2');
-            if (!page2) return;
-            page2.classList.remove('no-scroll');
-            page2.style.overflowY = 'auto';
-        } catch (e) {
-            // silent
-        }
+            const page3 = document.getElementById('page-3');
+            if (!page3) return;
+            page3.classList.remove('no-scroll');
+            page3.style.overflowY = 'auto';
+        } catch (e) { /* silent */ }
     })();
 }
 
+/* ═══════════════════════════════════════════════
+   SHOW LEGEND DETAIL — goes to page-4
+   Cari unit berdasarkan name + currentSeason
+═══════════════════════════════════════════════ */
 function showLegendDetail(name) {
-    const unit = rawData.find(u => u.name === name);
+    // Cari unit di season saat ini; fallback ke entry pertama dengan nama sama
+    const unit = rawData.find(u => u.name === name && String(u.season || '').trim() === String(currentSeason).trim())
+              || rawData.find(u => u.name === name);
     if (!unit) return;
+
     localStorage.setItem('lastUnit', name);
+
     const detailImg = document.getElementById('detail-img');
     if (detailImg) detailImg.src = unit.main_image_url || '';
+
     const rarityBadge = document.getElementById('detail-rarity-badge');
     if (rarityBadge) rarityBadge.innerText = unit.rarity || '';
+
     const detailName = document.getElementById('detail-name');
-    if (detailName) detailName.innerText = unit.name || ''; // Name tidak ditranslate
+    if (detailName) detailName.innerText = unit.name || '';
 
     const detailNick = document.getElementById('detail-nickname');
     const detailStory = document.getElementById('detail-story');
     const tagContainer = document.getElementById('detail-tags-container');
 
-    // Show page first (no delay for user)
-    UI.showPage('page-3');
+    // Pindah ke page-4 dulu (no delay)
+    UI.showPage('page-4');
 
-    // Set original content
-    if (detailNick) detailNick.innerText = unit.nickname ? `"${unit.nickname}"` : "";
+    if (detailNick) detailNick.innerText = unit.nickname ? `"${unit.nickname}"` : '';
     if (detailStory) detailStory.innerText = unit.story || '';
-    const rawTags = unit.tags ? unit.tags.split(',').map(t => t.trim()).filter(Boolean) : [];
-    if (tagContainer) tagContainer.innerHTML = rawTags.map(t => `<span class="tag" onclick="jumpToTag('${t.replace(/'/g, "\\'")}')">${t}</span>`).join('');
 
-    const track = document.getElementById('carousel-track');
-    if (track) {
-        const images = [unit.extra_image_1, unit.extra_image_2, unit.extra_image_3].filter(Boolean);
-        const activeIndex = Math.max(0, Math.min(images.length - 1, Math.floor(images.length / 2)));
-        track.innerHTML = images.map((img, i) => `<img class="extra-img ${i === activeIndex ? 'active' : ''}" src="${img}" onclick="UI.handleCarousel(this)">`).join('');
+    const rawTags = unit.tags ? unit.tags.split(',').map(t => t.trim()).filter(Boolean) : [];
+    if (tagContainer) {
+        tagContainer.innerHTML = rawTags.map(t =>
+            `<span class="tag" onclick="jumpToTag('${t.replace(/'/g, "\\'")}')">${t}</span>`
+        ).join('');
+    }
+
+    // ── Set up Season Button ──
+    const seasonBtn = document.getElementById('season-appearances-btn');
+    if (seasonBtn) {
+        seasonBtn.onclick = () => showSeasonPopup(unit.name);
     }
 }
 
+/* ═══════════════════════════════════════════════
+   SHOW SEASON POPUP
+   Tampilkan season mana saja unit ini muncul
+═══════════════════════════════════════════════ */
+function showSeasonPopup(unitName) {
+    // Kumpulkan semua season yang mengandung unit ini (nama sama)
+    const appearances = rawData
+        .filter(u => u.name === unitName && u.season && u.season.trim() !== '')
+        .map(u => u.season.trim());
+    const uniqueSeasons = [...new Set(appearances)].sort((a, b) => Number(a) - Number(b));
+
+    // Update subtitle (nama unit)
+    const subtitleEl = document.getElementById('season-popup-unit-name');
+    if (subtitleEl) subtitleEl.innerText = unitName;
+
+    // Render chips season
+    const listEl = document.getElementById('season-popup-list');
+    if (listEl) {
+        if (uniqueSeasons.length === 0) {
+            listEl.innerHTML = `<p style="opacity:.5;font-size:.75rem;letter-spacing:.08em;">DATA SEASON TIDAK TERSEDIA</p>`;
+        } else {
+            listEl.innerHTML = uniqueSeasons.map(s => `
+                <div class="season-chip ${String(s) === String(currentSeason) ? 'active' : ''}"
+                     onclick="navigateToSeason('${s}', '${unitName.replace(/'/g, "\\'")}')">
+                    SEASON ${s}
+                </div>
+            `).join('');
+        }
+    }
+
+    const popup = document.getElementById('season-popup');
+    if (popup) popup.classList.remove('hidden');
+}
+
+/* ═══════════════════════════════════════════════
+   NAVIGATE TO SEASON (dari dalam Season Popup)
+   Pindah ke versi unit di season lain
+═══════════════════════════════════════════════ */
+function navigateToSeason(season, unitName) {
+    currentSeason = String(season);
+    localStorage.setItem('currentSeason', currentSeason);
+
+    // Update label di page-2 juga
+    const label = document.getElementById('cat-season-label');
+    if (label) label.innerText = `SEASON ${currentSeason}`;
+
+    // Tutup popup
+    const popup = document.getElementById('season-popup');
+    if (popup) popup.classList.add('hidden');
+
+    // Tampilkan versi unit di season baru
+    showLegendDetail(unitName);
+}
+
+/* ═══════════════════════════════════════════════
+   JUMP TO TAG — kembali ke archive (page-3) dengan tag aktif
+═══════════════════════════════════════════════ */
 function jumpToTag(tag) {
-    UI.showPage('page-2');
+    UI.showPage('page-3');
     const panel = document.getElementById('filter-panel');
     if (panel) panel.classList.remove('hidden');
     filters.tags = [tag];
     renderArchive();
     document.querySelectorAll('.t-chip').forEach(c => {
-        // Match by raw tag (dataset) or innerText fallback
         const rawTag = c.dataset.rawTag || c.innerText;
         if (rawTag === tag) c.classList.add('active');
         else c.classList.remove('active');
     });
 }
-
-// Auto-hide buttons on scroll for Page 3
-document.getElementById('page-3').addEventListener('scroll', function() {
-    const nav = document.querySelector('.detail-nav-static');
-    if (!nav) return;
-    
-    const currentScrollY = this.scrollTop;
-    
-    if (currentScrollY > lastScrollY && currentScrollY > 50) {
-        // Scrolling down - hide
-        nav.classList.add('nav-hidden');
-    } else {
-        // Scrolling up - show
-        nav.classList.remove('nav-hidden');
-    }
-    lastScrollY = currentScrollY;
-});
 
 init();
 
@@ -684,7 +824,6 @@ function addWatermarkToImage(canvas, ctx) {
     const w = canvas.width;
     const h = canvas.height;
 
-    // ── Measure helper ──
     function measure(font, text) {
         ctx.font = font;
         return ctx.measureText(text).width;
@@ -692,14 +831,11 @@ function addWatermarkToImage(canvas, ctx) {
 
     ctx.save();
 
-    // ── LAYER 1: Main diagonal grid — 30° tilt, generous spacing ──
     const fs1   = Math.max(Math.min(w / 20, 20), 9);
     const font1 = `bold ${fs1}px Orbitron, Arial, sans-serif`;
     const tw1   = measure(font1, mainText);
-    // Gap between cols = 1.5× text width (never overlap)
     const gapX1  = tw1 * 1.5;
     const stepX1 = tw1 + gapX1;
-    // Gap between rows = 3.5× font size
     const stepY1 = fs1 * 3.5;
 
     ctx.font          = font1;
@@ -720,11 +856,10 @@ function addWatermarkToImage(canvas, ctx) {
     ctx.restore();
     ctx.save();
 
-    // ── LAYER 2: Second pass — staggered offset, different angle ──
     const fs2   = Math.max(Math.min(w / 28, 13), 7);
     const font2 = `${fs2}px Arial, sans-serif`;
     const tw2   = measure(font2, shortText);
-    const stepX2 = (tw2 + tw2 * 2.0);  // 2× gap
+    const stepX2 = (tw2 + tw2 * 2.0);
     const stepY2 = fs2 * 5;
 
     ctx.font         = font2;
@@ -733,7 +868,6 @@ function addWatermarkToImage(canvas, ctx) {
     ctx.rotate(-15 * Math.PI / 180);
 
     for (let row = 0; row * stepY2 - h < h * 2.5; row++) {
-        // Stagger even/odd rows by half stepX so pattern doesn't line up
         const offsetX = (row % 2 === 0) ? 0 : stepX2 * 0.5;
         const y = row * stepY2 - h * 0.5;
         for (let x = -w * 1.2 + offsetX; x < w * 2.2; x += stepX2) {
@@ -745,11 +879,9 @@ function addWatermarkToImage(canvas, ctx) {
     ctx.restore();
     ctx.save();
 
-    // ── LAYER 3: Top & bottom strip (single line each) ──
     const fs3   = Math.max(Math.min(w / 32, 11), 6);
     const font3 = `${fs3}px Orbitron, Arial`;
     const tw3   = measure(font3, mainText);
-    // Spacing: text width + 60% gap
     const stepX3 = tw3 + tw3 * 0.6;
 
     ctx.font         = font3;
@@ -764,7 +896,6 @@ function addWatermarkToImage(canvas, ctx) {
     }
     ctx.restore();
 
-    // ── LAYER 4: Subtle noise dots ──
     const dots = Math.floor(w * h * 0.006);
     for (let i = 0; i < dots; i++) {
         ctx.globalAlpha = 0.05 + Math.random() * 0.07;

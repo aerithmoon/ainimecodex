@@ -9,6 +9,7 @@ var DATA_AREA = [
 
   {
     category: "Area",
+    season: "1",                               // isi nomor season: "1" / "2" / "3" / dst
     name: "Frozen Tundra",
     nickname: "The Eternal Winter",
     rarity: "C",                              // S / A / B / C / D
@@ -24,6 +25,7 @@ var DATA_AREA = [
 
   {
     category: "Area",
+    season: "",                               // isi nomor season: "1" / "2" / "3" / dst
     name: "",
     nickname: "",
     rarity: "",
