@@ -444,31 +444,102 @@ function renderPage2Quote() {
     if (sourceEl) sourceEl.innerText = `— ${unit.name}`;
 }
 
-function renderPage2Spotlight() {
-    // Pilih unit random dari season aktif (char/monster/pet saja) yang punya main_image
+function renderPage2Content(seasonChanged = false) {
+    renderPage2Stats();
+    renderPage2Quote();
+    if (seasonChanged) {
+        // Season berubah → reset pool dan restart slide
+        buildSpotlightPool();
+        startSpotlightSlider();
+    } else if (!window._p2SpotlightPool || window._p2SpotlightPool.length === 0) {
+        // Belum ada pool sama sekali (pertama kali load)
+        buildSpotlightPool();
+        startSpotlightSlider();
+    } else {
+        // Pool sudah ada, pastikan spotlight kelihatan saja
+        showSpotlightUnit(window._p2SpotlightPool[window._p2SpotlightIdx || 0]);
+    }
+}
+
+/* ─── Build pool: semua char/monster/pet dari season aktif ─── */
+function buildSpotlightPool() {
     const pool = rawData.filter(u =>
-        u.name && u.main_image_url && u.main_image_url.trim() !== 'data image/' &&
-        u.main_image_url.trim() !== '' &&
+        u.name && u.name.trim() !== '' &&
         String(u.season || '').trim() === String(currentSeason).trim() &&
         ['character','monster','pet'].includes((u.category||'').toLowerCase())
     );
+    // Acak urutan pool
+    for (let i = pool.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [pool[i], pool[j]] = [pool[j], pool[i]];
+    }
+    window._p2SpotlightPool = pool;
+    window._p2SpotlightIdx  = 0;
+}
+
+/* ─── Show satu unit di spotlight ─── */
+function showSpotlightUnit(unit) {
     const spotEl = document.getElementById('p2-spotlight');
     if (!spotEl) return;
-    if (pool.length === 0) { spotEl.classList.add('hidden'); return; }
-    const unit = pool[Math.floor(Math.random() * pool.length)];
-    window._p2SpotlightUnit = unit; // simpan untuk onclick
-    const imgEl = document.getElementById('p2-spotlight-img');
-    const nameEl = document.getElementById('p2-spotlight-name');
-    const catEl = document.getElementById('p2-spotlight-cat');
+    if (!unit) { spotEl.classList.add('hidden'); return; }
+
+    window._p2SpotlightUnit = unit;
+
+    const imgEl   = document.getElementById('p2-spotlight-img');
+    const nameEl  = document.getElementById('p2-spotlight-name');
+    const catEl   = document.getElementById('p2-spotlight-cat');
     const badgeEl = document.getElementById('p2-spotlight-rarity');
-    if (imgEl) imgEl.src = unit.main_image_url;
-    if (nameEl) nameEl.innerText = unit.name;
-    if (catEl) catEl.innerText = (unit.category || '').toUpperCase();
+
+    const hasImg = unit.main_image_url &&
+                   unit.main_image_url.trim() !== '' &&
+                   unit.main_image_url.trim() !== 'data image/';
+
+    if (imgEl) {
+        imgEl.src = hasImg ? unit.main_image_url : '';
+        imgEl.style.display = hasImg ? 'block' : 'none';
+    }
+    if (nameEl)  nameEl.innerText  = unit.name;
+    if (catEl)   catEl.innerText   = (unit.category || '').toUpperCase();
     if (badgeEl) {
-        badgeEl.innerText = unit.rarity || '';
-        badgeEl.className = `p2-spotlight-badge rarity-${(unit.rarity||'').toLowerCase()}`;
+        badgeEl.innerText   = unit.rarity || '';
+        badgeEl.className   = `p2-spotlight-badge rarity-${(unit.rarity||'').toLowerCase()}`;
     }
     spotEl.classList.remove('hidden');
+}
+
+/* ─── Auto-slide: ganti unit tiap 4 detik ─── */
+function startSpotlightSlider() {
+    // Bersihkan timer sebelumnya
+    if (window._p2SliderTimer) { clearInterval(window._p2SliderTimer); window._p2SliderTimer = null; }
+
+    const pool = window._p2SpotlightPool || [];
+    if (pool.length === 0) {
+        const spotEl = document.getElementById('p2-spotlight');
+        if (spotEl) spotEl.classList.add('hidden');
+        return;
+    }
+
+    // Tampilkan unit pertama langsung
+    window._p2SpotlightIdx = 0;
+    showSpotlightUnit(pool[0]);
+
+    // Kalau pool > 1, mulai auto-slide
+    if (pool.length > 1) {
+        window._p2SliderTimer = setInterval(() => {
+            // Hanya slide kalau page-2 aktif
+            const p2 = document.getElementById('page-2');
+            if (!p2 || !p2.classList.contains('active')) return;
+
+            window._p2SpotlightIdx = (window._p2SpotlightIdx + 1) % pool.length;
+            showSpotlightUnit(pool[window._p2SpotlightIdx]);
+        }, 4000);
+    }
+}
+
+function renderPage2Spotlight() {
+    // Legacy wrapper — langsung pakai buildSpotlightPool + startSpotlightSlider
+    buildSpotlightPool();
+    startSpotlightSlider();
 }
 
 function p2SpotlightClick() {
