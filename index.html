@@ -7,16 +7,19 @@
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="style-wallpapers.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@700;900&family=Cinzel:wght@700&family=Exo+2:wght@300;400;600;800&family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@700;900&family=Cinzel:wght@700&family=Exo+2:wght@300;400;600;800&family=Orbitron:wght@400;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
     <style>
     /* ── PAGE 1 ── */
     #page-1{overflow:hidden!important}
 
-    /* ── PAGE 2: no scroll ── */
-    #page-2{overflow:hidden!important}
-    #page-2 .hero-section{overflow:hidden!important;height:100vh}
-    /* Mobile: raise content higher */
-    #page-2 .cat-page-inner{display:flex;flex-direction:column;align-items:center;justify-content:flex-start;height:100%;padding:0 16px;padding-top:clamp(60px,12vh,110px);position:relative;overflow:visible}
+    #page-2{overflow-y:auto!important;overflow-x:hidden!important}
+    #page-2 .hero-section{overflow:visible!important;min-height:100vh}
+    #page-2 .cat-page-inner{display:flex;flex-direction:column;align-items:center;justify-content:flex-start;height:100%;padding:0 16px;padding-top:clamp(50px,8vh,80px);padding-bottom:30px;position:relative;overflow:visible}
+    @media(min-width:1024px){
+        #page-2{overflow:hidden!important}
+        #page-2 .hero-section{height:100vh;overflow:hidden!important}
+        #page-2 .cat-page-inner{justify-content:center;padding-top:0;padding-bottom:0}
+    }
     #page-2 .cancel-btn-new{display:none!important}
 
     /* ── PAGE 2 CENTERED LAYOUT ── */
@@ -138,6 +141,61 @@
     .season-chip:hover{background:rgba(160,100,255,.18);border-color:rgba(160,120,255,.5)}
     .season-chip.active{background:rgba(160,100,255,.28);border-color:rgba(160,120,255,.75);color:rgb(210,175,255);font-weight:700}
     .season-chip.active::after{content:' ✦';opacity:.7}
+
+    /* ── PAGE 2 PARTICLES CANVAS ── */
+    .p2-particles-canvas{position:absolute;top:0;left:0;width:100%;height:100%;z-index:0;pointer-events:none}
+
+    /* ── PAGE 2 STATS ROW ── */
+    .p2-stats-row{display:flex;align-items:center;justify-content:center;gap:8px;margin:10px 0 8px;width:100%}
+    .p2-stat{display:flex;flex-direction:column;align-items:center;gap:2px}
+    .p2-stat-val{font-family:'Orbitron',sans-serif;font-size:1.4rem;font-weight:900;color:rgba(210,180,255,.95);line-height:1;transition:all .3s ease}
+    .p2-stat-label{font-family:'Orbitron',sans-serif;font-size:.45rem;letter-spacing:.18em;color:rgba(180,150,230,.55);text-transform:uppercase}
+    .p2-stat-divider{font-size:.7rem;color:rgba(180,140,255,.35);align-self:center;padding:0 4px}
+
+    /* ── PAGE 2 QUOTE BOX ── */
+    .p2-quote-box{display:flex;flex-direction:column;align-items:center;gap:4px;background:rgba(120,60,200,.1);border:1px solid rgba(160,100,255,.2);border-radius:10px;padding:10px 16px;margin:6px 0;width:100%;max-width:360px;position:relative}
+    .p2-quote-icon{font-size:1.4rem;color:rgba(180,130,255,.4);line-height:1;align-self:flex-start;margin-bottom:2px}
+    .p2-quote-text{font-family:'Exo 2',sans-serif;font-size:.72rem;font-style:italic;color:rgba(220,200,255,.8);text-align:center;line-height:1.5;margin:0}
+    .p2-quote-source{font-family:'Orbitron',sans-serif;font-size:.55rem;letter-spacing:.15em;color:rgba(180,140,255,.55);margin:0;align-self:flex-end}
+
+    /* ── PAGE 2 SPOTLIGHT ── */
+    .p2-spotlight{display:flex;flex-direction:column;align-items:center;gap:6px;background:rgba(100,50,180,.12);border:1px solid rgba(160,100,255,.28);border-radius:12px;padding:10px 14px;margin:6px 0;width:100%;max-width:360px;cursor:pointer;transition:all .2s ease}
+    .p2-spotlight:hover{background:rgba(100,50,180,.22);border-color:rgba(160,100,255,.55);transform:translateY(-2px)}
+    .p2-spotlight-label{font-family:'Orbitron',sans-serif;font-size:.5rem;letter-spacing:.22em;color:rgba(200,160,255,.5);text-align:center}
+    .p2-spotlight-inner{display:flex;align-items:center;gap:12px;width:100%}
+    .p2-spotlight-img{width:50px;height:68px;object-fit:cover;border-radius:8px;border:1.5px solid rgba(160,100,255,.4);flex-shrink:0}
+    .p2-spotlight-info{display:flex;flex-direction:column;gap:3px;flex:1;min-width:0}
+    .p2-spotlight-badge{width:28px;height:22px;display:flex;align-items:center;justify-content:center;font-family:'Orbitron',sans-serif;font-size:.65rem;font-weight:900;border-radius:4px}
+    .p2-spotlight-name{font-family:'Orbitron',sans-serif;font-size:.7rem;font-weight:800;color:rgba(230,210,255,.95);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .p2-spotlight-cat{font-family:'Orbitron',sans-serif;font-size:.52rem;letter-spacing:.12em;color:rgba(180,150,230,.55)}
+    .p2-spotlight-hint{font-family:'Orbitron',sans-serif;font-size:.48rem;letter-spacing:.15em;color:rgba(160,120,220,.4);margin-top:2px}
+
+    /* ── CATSEL BACK + CANCEL ROW ── */
+    .catsel-btn-row{display:flex;gap:10px;justify-content:center;margin-top:4px}
+    .catsel-btn-row .rpg-btn-small:first-child{background:rgba(155,93,229,.15);border-color:rgba(155,93,229,.5);color:rgba(210,180,255,.9)}
+
+    /* ── AWAKENING BUTTON (page 4) ── */
+    .awakening-appearances-btn{display:flex;align-items:center;justify-content:center;gap:12px;width:100%;padding:16px 20px;background:rgba(255,160,30,.1);border:1px solid rgba(255,160,30,.35);border-radius:12px;color:#fff;cursor:pointer;transition:all .2s ease;margin-top:8px}
+    .awakening-appearances-btn:hover{background:rgba(255,160,30,.22);border-color:rgba(255,200,50,.7);transform:translateY(-2px)}
+    .awakening-appearances-btn i{font-size:1.4rem;color:rgba(255,200,80,.9)}
+    .awakening-btn-label{font-family:'Orbitron',sans-serif;font-size:.72rem;font-weight:800;letter-spacing:.2em;color:rgba(255,220,100,.95)}
+    @media(min-width:1024px){
+        .awakening-appearances-btn{padding:16px 20px !important;gap:12px !important}
+        .awakening-appearances-btn i{font-size:1.4rem !important}
+        .awakening-btn-label{font-size:.72rem !important;letter-spacing:.2em !important}
+    }
+
+    /* ── AWAKENING POPUP ── */
+    .awakening-popup-content{max-width:380px;text-align:center}
+    .awakening-popup-header{display:flex;align-items:center;justify-content:center;gap:10px;margin-bottom:4px}
+    .awakening-fire-icon{font-size:1.3rem;color:rgba(255,180,50,.9)}
+    .awakening-popup-img-wrap{position:relative;display:inline-block;margin:12px 0 8px}
+    .awakening-popup-img-wrap img{max-width:180px;max-height:240px;object-fit:cover;border-radius:10px;border:2px solid rgba(255,160,30,.5);cursor:pointer;transition:all .2s ease}
+    .awakening-popup-img-wrap img:hover{border-color:rgba(255,200,50,.85);transform:scale(1.02)}
+    .awakening-popup-img-hint{font-family:'Orbitron',sans-serif;font-size:.5rem;letter-spacing:.12em;color:rgba(255,180,50,.4);margin-top:5px}
+    .awakening-popup-story-box{background:rgba(255,140,20,.07);border:1px solid rgba(255,140,20,.2);border-radius:10px;padding:12px 16px;text-align:left;margin-bottom:10px}
+    .awakening-popup-story-box .box-header{font-family:'Orbitron',sans-serif;font-size:.6rem;letter-spacing:.2em;color:rgba(255,180,50,.7);margin-bottom:8px}
+    .awakening-popup-story-box p{font-family:'Exo 2',sans-serif;font-size:.78rem;color:rgba(255,230,180,.85);line-height:1.6;margin:0}
     </style>
 </head>
 <body class="theme-character">
@@ -169,7 +227,102 @@
         </div>
     </section>
 
-    <!-- PAGE 2: CATEGORY SELECTION (NEW) -->
+    <!-- PAGE 2: CATEGORY SELECTION -->
+    <section id="page-2" class="page">
+        <!-- Animated particle canvas background -->
+        <canvas id="p2-particles" class="p2-particles-canvas"></canvas>
+        <div class="hero-section">
+            <div class="floating-decorations">
+                <div class="circle-1"></div>
+                <div class="circle-2"></div>
+            </div>
+            <div class="cat-page-inner">
+                <div class="p2-center-block">
+
+                    <!-- Crown ornament -->
+                    <div class="p2-crown">
+                        <span class="p2-crown-star">◈</span>
+                        <span class="p2-crown-gem">✦</span>
+                        <span class="p2-crown-star">◈</span>
+                    </div>
+
+                    <!-- Season label -->
+                    <div class="p2-season-big" id="cat-season-label">SEASON 1</div>
+                    <p class="p2-subtitle-text">Legends never fade — they just wait to be rediscovered.</p>
+                    <div class="p2-tagline">✧ CHOOSE YOUR PATH ✧</div>
+
+                    <!-- Stats counter row -->
+                    <div class="p2-stats-row">
+                        <div class="p2-stat">
+                            <span class="p2-stat-val" id="p2-stat-units">0</span>
+                            <span class="p2-stat-label">UNITS</span>
+                        </div>
+                        <div class="p2-stat-divider">◈</div>
+                        <div class="p2-stat">
+                            <span class="p2-stat-val" id="p2-stat-srank">0</span>
+                            <span class="p2-stat-label">S-RANK</span>
+                        </div>
+                        <div class="p2-stat-divider">◈</div>
+                        <div class="p2-stat">
+                            <span class="p2-stat-val" id="p2-stat-cats">0</span>
+                            <span class="p2-stat-label">TYPES</span>
+                        </div>
+                    </div>
+
+                    <!-- Lore quote -->
+                    <div class="p2-quote-box">
+                        <span class="p2-quote-icon">❝</span>
+                        <p class="p2-quote-text" id="p2-quote-text">Waiting for the legend to speak...</p>
+                        <p class="p2-quote-source" id="p2-quote-source">— Unknown</p>
+                    </div>
+
+                    <!-- Unit Spotlight -->
+                    <div class="p2-spotlight hidden" id="p2-spotlight" onclick="p2SpotlightClick()">
+                        <div class="p2-spotlight-label">✦ FEATURED UNIT ✦</div>
+                        <div class="p2-spotlight-inner">
+                            <img class="p2-spotlight-img" id="p2-spotlight-img" src="" alt="">
+                            <div class="p2-spotlight-info">
+                                <div class="p2-spotlight-badge rarity-s" id="p2-spotlight-rarity">S</div>
+                                <div class="p2-spotlight-name" id="p2-spotlight-name">—</div>
+                                <div class="p2-spotlight-cat" id="p2-spotlight-cat">—</div>
+                                <div class="p2-spotlight-hint">TAP TO EXPLORE ›</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 2 Action Buttons -->
+                    <div class="p2-dual-btns">
+                        <button id="p2-season-btn" class="p2-action-btn p2-btn-season">
+                            <i class="fas fa-scroll"></i>
+                            <span class="p2-btn-name">SEASON</span>
+                            <span class="p2-btn-sub" id="p2-season-num-display">S1</span>
+                        </button>
+                        <button id="p2-category-btn" class="p2-action-btn p2-btn-cat">
+                            <i class="fas fa-wand-magic-sparkles"></i>
+                            <span class="p2-btn-name">CATEGORY</span>
+                            <span class="p2-btn-sub">SELECT</span>
+                        </button>
+                    </div>
+
+                    <!-- HOME text button -->
+                    <button class="p2-home-btn back-to-1">
+                        <i class="fas fa-house"></i>
+                        <span>HOME</span>
+                    </button>
+
+                    <!-- Decorative rune strip -->
+                    <div class="p2-rune-strip">
+                        <span class="p2-rune r1">✦</span>
+                        <span class="p2-rune r2">◈</span>
+                        <span class="p2-rune r3">✧</span>
+                        <span class="p2-rune r4">★</span>
+                        <span class="p2-rune r5">◆</span>
+                        <span class="p2-rune r6">✦</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
     <section id="page-2" class="page">
         <div class="hero-section">
             <div class="floating-decorations">
@@ -299,7 +452,7 @@
                         <p id="detail-story">Ancient texts tell of a hero...</p>
                     </div>
                 </div>
-                <!-- SEASON + COSTUME SECTION -->
+                <!-- SEASON + COSTUME + AWAKENING SECTION -->
                 <div class="unit-gallery unit-season-section">
                     <div class="unit-action-row">
                         <button id="season-appearances-btn" class="season-appearances-btn">
@@ -311,6 +464,11 @@
                             <span class="costume-btn-label">COSTUME</span>
                         </button>
                     </div>
+                    <!-- AWAKENING: hidden sampai AWAKENING_ENABLED = true di script.js -->
+                    <button id="awakening-btn" class="awakening-appearances-btn hidden">
+                        <i class="fas fa-fire-flame-curved"></i>
+                        <span class="awakening-btn-label">AWAKENING</span>
+                    </button>
                 </div>
             </div>
         </div>
@@ -348,7 +506,10 @@
                     <span class="cat-name">AREA</span>
                 </div>
             </div>
-            <button id="close-category-select" class="rpg-btn-small">CANCEL</button>
+            <div class="catsel-btn-row">
+                <button id="catsel-back-btn" class="rpg-btn-small">◀ BACK</button>
+                <button id="close-category-select" class="rpg-btn-small">CANCEL</button>
+            </div>
         </div>
     </div>
 
@@ -414,6 +575,27 @@
             <p class="season-popup-subtitle" id="costume-popup-unit-name">—</p>
             <div id="costume-popup-list" class="season-popup-list costume-popup-list"></div>
             <button id="close-costume-popup" class="rpg-btn-small">CLOSE</button>
+        </div>
+    </div>
+
+    <!-- AWAKENING POPUP -->
+    <div id="awakening-popup" class="rpg-modal hidden">
+        <div class="modal-backdrop" id="awakening-popup-backdrop"></div>
+        <div class="modal-content awakening-popup-content">
+            <div class="awakening-popup-header">
+                <i class="fas fa-fire-flame-curved awakening-fire-icon"></i>
+                <h3>AWAKENING</h3>
+            </div>
+            <p class="season-popup-subtitle" id="awakening-popup-unit-name">—</p>
+            <div class="awakening-popup-img-wrap" id="awakening-popup-img-wrap">
+                <img id="awakening-popup-img" src="" alt="" onclick="viewAwakeningImage()">
+                <div class="awakening-popup-img-hint">TAP IMAGE TO FULLSCREEN</div>
+            </div>
+            <div class="awakening-popup-story-box" id="awakening-popup-story-wrap">
+                <div class="box-header">AWAKENING LORE</div>
+                <p id="awakening-popup-story"></p>
+            </div>
+            <button id="close-awakening-popup" class="rpg-btn-small">CLOSE</button>
         </div>
     </div>
 

@@ -823,9 +823,9 @@ body {
     justify-content: space-between;
     align-items: center;
     padding: 0 20px;
-    font-family: 'Orbitron', sans-serif;
-    font-size: 0.9rem;
-    font-weight: 800;
+    font-family: 'Share Tech Mono', 'Courier New', monospace;
+    font-size: 1.1rem;
+    font-weight: 400;
     color: var(--accent-clr);
     pointer-events: none;
     text-shadow: none;
@@ -833,19 +833,25 @@ body {
 
 #system-clock {
     position: fixed;
-    top: 13px;
+    top: 11px;
     left: 20px;
     pointer-events: auto;
     display: block;
+    font-family: 'Share Tech Mono', 'Courier New', monospace;
+    font-size: 1.1rem;
+    letter-spacing: .06em;
 }
 
 #system-date {
     position: fixed;
-    top: 13px;
+    top: 11px;
     right: 20px;
     pointer-events: auto;
     cursor: pointer;
     display: block;
+    font-family: 'Share Tech Mono', 'Courier New', monospace;
+    font-size: 1.0rem;
+    letter-spacing: .06em;
 }
 
 #page-2 #system-clock,
@@ -1835,9 +1841,9 @@ body {
     .category-grid { grid-template-columns: repeat(6, 1fr) !important; max-width: 900px !important; padding: 50px 30px 30px !important; }
 
     /* HUD CLOCK/DATE - bigger on desktop */
-    #system-clock, #system-date { font-size: 1.15rem !important; }
-    #system-clock { top: 14px !important; left: 30px !important; }
-    #system-date { top: 14px !important; right: 30px !important; }
+    #system-clock, #system-date { font-family: 'Share Tech Mono','Courier New',monospace !important; font-size: 1.5rem !important; letter-spacing: .08em !important; }
+    #system-clock { top: 12px !important; left: 30px !important; }
+    #system-date { top: 14px !important; right: 30px !important; font-size: 1.25rem !important; }
 
     /* PAGE 2 DESKTOP */
     #page-2 { padding-top: 0 !important; }

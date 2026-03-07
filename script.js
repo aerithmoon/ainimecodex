@@ -4,7 +4,11 @@ const CONFIG = {
     categories: ['Character', 'Monster', 'Pet', 'Item', 'Magic', 'Area']
 };
 
+// ── AWAKENING: set ke true saat siap diluncurkan ──
+const AWAKENING_ENABLED = false;
+
 let rawData = [];
+let _page2SeasonFlow = false; // flag: apakah lagi di flow season→category page 2
 
 let currentSeason = localStorage.getItem('currentSeason') || '1';
 let currentCat = localStorage.getItem('currentCat') || 'Character';
@@ -61,6 +65,15 @@ const UI = {
             setTimeout(() => {
                 if (window._startPage4NavTimer) window._startPage4NavTimer();
             }, 100);
+        }
+
+        // Page 2: render stats/quote/spotlight, lalu auto-open season flow
+        if (pageId === 'page-2') {
+            renderPage2Content();
+            setTimeout(() => {
+                _page2SeasonFlow = true;
+                openSeasonChangeModal();
+            }, 350);
         }
     },
 
@@ -277,6 +290,29 @@ function selectSeason(season, fromModal) {
     }
 }
 
+/* ═══════════════════════════════════════════════
+   SELECT SEASON (PAGE 2 FLOW)
+   Pilih season → tutup modal → buka category modal
+═══════════════════════════════════════════════ */
+function selectSeasonPage2Flow(season) {
+    currentSeason = String(season);
+    localStorage.setItem('currentSeason', currentSeason);
+    updateSeasonLabels();
+
+    // Tutup season modal
+    const chgModal = document.getElementById('season-change-modal');
+    if (chgModal) chgModal.classList.add('hidden');
+
+    // Update page 2 content dengan season baru
+    renderPage2Content();
+
+    // Buka category modal setelah delay kecil (smooth transition)
+    setTimeout(() => {
+        const catModal = document.getElementById('category-select-modal');
+        if (catModal) catModal.classList.remove('hidden');
+    }, 250);
+}
+
 function updateSeasonLabels() {
     const label = document.getElementById('cat-season-label');
     if (label) label.innerText = `SEASON ${currentSeason}`;
@@ -302,15 +338,260 @@ function openSeasonChangeModal() {
     const fallback = seasons.length === 0 ? ['1'] : seasons;
     const listEl = document.getElementById('season-change-list');
     if (listEl) {
-        listEl.innerHTML = fallback.map(s => `
-            <div class="season-chip ${String(s) === String(currentSeason) ? 'active' : ''}"
-                 onclick="selectSeason('${s}', true); if(document.getElementById('page-3').classList.contains('active')){renderArchive();}">
-                SEASON ${s}
-            </div>
-        `).join('');
+        listEl.innerHTML = fallback.map(s => {
+            // Page 2 flow: setelah pilih season → auto buka category modal
+            const clickFn = _page2SeasonFlow
+                ? `selectSeasonPage2Flow('${s}')`
+                : `selectSeason('${s}', true); if(document.getElementById('page-3').classList.contains('active')){renderArchive();}`;
+            return `<div class="season-chip ${String(s) === String(currentSeason) ? 'active' : ''}" onclick="${clickFn}">SEASON ${s}</div>`;
+        }).join('');
     }
+    // Update modal title & subtitle based on context
+    const titleEl = document.querySelector('#season-change-modal h3');
+    if (titleEl) titleEl.innerText = _page2SeasonFlow ? 'SELECT SEASON' : 'CHANGE SEASON';
     const modal = document.getElementById('season-change-modal');
     if (modal) modal.classList.remove('hidden');
+}
+
+/* ═══════════════════════════════════════════════
+   PAGE 2 — RENDER ALL CONTENT
+═══════════════════════════════════════════════ */
+function renderPage2Content() {
+    renderPage2Stats();
+    renderPage2Quote();
+    renderPage2Spotlight();
+}
+
+function renderPage2Stats() {
+    const seasonData = rawData.filter(u =>
+        u.name && u.name.trim() !== '' &&
+        matchSeasonForCat(u.season, u.category)
+    );
+    const inSeason = seasonData.filter(u => {
+        // untuk eksak (char/monster/pet) cek season sama, untuk kumulatif cek <=
+        return matchSeasonForCat(u.season, u.category) &&
+               String(u.season || '').trim() !== '';
+    });
+    // Total units di season aktif (char+monster+pet exact; item/magic/area cumulative)
+    const totalUnits = rawData.filter(u =>
+        u.name && u.name.trim() !== '' &&
+        matchSeasonForCat(u.season, u.category)
+    ).length;
+    const sRankCount = rawData.filter(u =>
+        u.name && u.name.trim() !== '' &&
+        matchSeasonForCat(u.season, u.category) &&
+        (u.rarity || '').toUpperCase() === 'S'
+    ).length;
+    const catsWithData = new Set(rawData.filter(u =>
+        u.name && u.name.trim() !== '' &&
+        matchSeasonForCat(u.season, u.category)
+    ).map(u => u.category)).size;
+
+    animateCount('p2-stat-units', totalUnits);
+    animateCount('p2-stat-srank', sRankCount);
+    animateCount('p2-stat-cats', catsWithData);
+}
+
+function animateCount(elId, target) {
+    const el = document.getElementById(elId);
+    if (!el) return;
+    let start = 0;
+    const duration = 800;
+    const step = Math.ceil(target / (duration / 30));
+    const timer = setInterval(() => {
+        start += step;
+        if (start >= target) { start = target; clearInterval(timer); }
+        el.innerText = start;
+    }, 30);
+}
+
+function renderPage2Quote() {
+    // Ambil unit dari season aktif (prefer Character/Monster/Pet yang ada story)
+    const pool = rawData.filter(u =>
+        u.name && u.story && u.story.trim() !== '' &&
+        String(u.season || '').trim() === String(currentSeason).trim() &&
+        ['character','monster','pet'].includes((u.category||'').toLowerCase())
+    );
+    const fallback = rawData.filter(u =>
+        u.name && u.story && u.story.trim() !== '' &&
+        String(u.season || '').trim() === String(currentSeason).trim()
+    );
+    const source = pool.length > 0 ? pool : fallback;
+    if (source.length === 0) return;
+    const unit = source[Math.floor(Math.random() * source.length)];
+    const quoteEl = document.getElementById('p2-quote-text');
+    const sourceEl = document.getElementById('p2-quote-source');
+    if (quoteEl) quoteEl.innerText = unit.story;
+    if (sourceEl) sourceEl.innerText = `— ${unit.name}`;
+}
+
+function renderPage2Spotlight() {
+    // Pilih unit random dari season aktif (char/monster/pet saja) yang punya main_image
+    const pool = rawData.filter(u =>
+        u.name && u.main_image_url && u.main_image_url.trim() !== 'data image/' &&
+        u.main_image_url.trim() !== '' &&
+        String(u.season || '').trim() === String(currentSeason).trim() &&
+        ['character','monster','pet'].includes((u.category||'').toLowerCase())
+    );
+    const spotEl = document.getElementById('p2-spotlight');
+    if (!spotEl) return;
+    if (pool.length === 0) { spotEl.classList.add('hidden'); return; }
+    const unit = pool[Math.floor(Math.random() * pool.length)];
+    window._p2SpotlightUnit = unit; // simpan untuk onclick
+    const imgEl = document.getElementById('p2-spotlight-img');
+    const nameEl = document.getElementById('p2-spotlight-name');
+    const catEl = document.getElementById('p2-spotlight-cat');
+    const badgeEl = document.getElementById('p2-spotlight-rarity');
+    if (imgEl) imgEl.src = unit.main_image_url;
+    if (nameEl) nameEl.innerText = unit.name;
+    if (catEl) catEl.innerText = (unit.category || '').toUpperCase();
+    if (badgeEl) {
+        badgeEl.innerText = unit.rarity || '';
+        badgeEl.className = `p2-spotlight-badge rarity-${(unit.rarity||'').toLowerCase()}`;
+    }
+    spotEl.classList.remove('hidden');
+}
+
+function p2SpotlightClick() {
+    const unit = window._p2SpotlightUnit;
+    if (!unit) return;
+    // Tutup semua modal, reset flag, pergi ke detail
+    _page2SeasonFlow = false;
+    const catModal = document.getElementById('category-select-modal');
+    if (catModal) catModal.classList.add('hidden');
+    selectRealm(unit.category, false);
+    showLegendDetail(unit.name);
+}
+
+/* ═══════════════════════════════════════════════
+   PAGE 2 — PARTICLES CANVAS ANIMATION
+═══════════════════════════════════════════════ */
+function initPage2Particles() {
+    const canvas = document.getElementById('p2-particles');
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    const runes = ['✦','◈','✧','★','◆','⬡','⬢','✴'];
+    let particles = [];
+    let animId = null;
+
+    function resize() {
+        canvas.width = canvas.offsetWidth;
+        canvas.height = canvas.offsetHeight;
+    }
+
+    function spawnParticles() {
+        particles = [];
+        const count = Math.floor((canvas.width * canvas.height) / 14000);
+        for (let i = 0; i < Math.max(count, 12); i++) {
+            particles.push({
+                x: Math.random() * canvas.width,
+                y: Math.random() * canvas.height,
+                rune: runes[Math.floor(Math.random() * runes.length)],
+                size: Math.random() * 10 + 7,
+                alpha: Math.random() * 0.18 + 0.04,
+                vx: (Math.random() - 0.5) * 0.3,
+                vy: (Math.random() - 0.6) * 0.4,
+                alphaDir: Math.random() > 0.5 ? 1 : -1,
+                alphaSpeed: Math.random() * 0.003 + 0.001
+            });
+        }
+    }
+
+    function draw() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        particles.forEach(p => {
+            p.x += p.vx;
+            p.y += p.vy;
+            p.alpha += p.alphaDir * p.alphaSpeed;
+            if (p.alpha > 0.22 || p.alpha < 0.02) p.alphaDir *= -1;
+            if (p.y < -20) p.y = canvas.height + 10;
+            if (p.y > canvas.height + 20) p.y = -10;
+            if (p.x < -20) p.x = canvas.width + 10;
+            if (p.x > canvas.width + 20) p.x = -10;
+            ctx.save();
+            ctx.globalAlpha = p.alpha;
+            ctx.font = `${p.size}px serif`;
+            ctx.fillStyle = 'rgba(200,160,255,1)';
+            ctx.fillText(p.rune, p.x, p.y);
+            ctx.restore();
+        });
+        animId = requestAnimationFrame(draw);
+    }
+
+    // Hanya jalankan saat page-2 aktif
+    function start() {
+        if (animId) return;
+        resize();
+        spawnParticles();
+        draw();
+    }
+    function stop() {
+        if (animId) { cancelAnimationFrame(animId); animId = null; }
+    }
+
+    window.addEventListener('resize', () => {
+        resize();
+        spawnParticles();
+    });
+
+    // Observer: mulai saat page-2 visible, stop saat tidak
+    const page2 = document.getElementById('page-2');
+    const obs = new MutationObserver(() => {
+        if (page2 && page2.classList.contains('active')) start();
+        else stop();
+    });
+    if (page2) obs.observe(page2, { attributes: true, attributeFilter: ['class'] });
+    // Kalau sudah aktif saat init
+    if (page2 && page2.classList.contains('active')) start();
+}
+
+/* ═══════════════════════════════════════════════
+   AWAKENING — Show popup
+═══════════════════════════════════════════════ */
+function showAwakeningPopup(unit) {
+    const aw = unit.awakening;
+    if (!aw) return;
+
+    const nameEl = document.getElementById('awakening-popup-unit-name');
+    if (nameEl) nameEl.innerText = unit.name || '—';
+
+    const imgEl = document.getElementById('awakening-popup-img');
+    const imgWrap = document.getElementById('awakening-popup-img-wrap');
+    const hasImg = aw.image && aw.image.trim() !== '' && aw.image.trim() !== 'data image/';
+    if (imgEl) {
+        if (hasImg) {
+            imgEl.src = aw.image;
+            imgEl.style.display = 'block';
+            if (imgWrap) imgWrap.style.display = 'block';
+        } else {
+            imgEl.src = '';
+            imgEl.style.display = 'none';
+            if (imgWrap) imgWrap.style.display = 'none';
+        }
+    }
+
+    const storyEl = document.getElementById('awakening-popup-story');
+    const storyWrap = document.getElementById('awakening-popup-story-wrap');
+    if (aw.story && aw.story.trim() !== '') {
+        if (storyEl) storyEl.innerText = aw.story;
+        if (storyWrap) storyWrap.style.display = 'block';
+    } else {
+        if (storyWrap) storyWrap.style.display = 'none';
+    }
+
+    // Simpan unit untuk fullscreen image
+    window._awakeningUnit = unit;
+
+    const popup = document.getElementById('awakening-popup');
+    if (popup) popup.classList.remove('hidden');
+}
+
+function viewAwakeningImage() {
+    const unit = window._awakeningUnit;
+    if (!unit || !unit.awakening || !unit.awakening.image) return;
+    const popup = document.getElementById('awakening-popup');
+    if (popup) popup.classList.add('hidden');
+    viewCostumeImage(unit.awakening.image, `${unit.name} — AWAKENING`);
 }
 
 async function init() {
@@ -401,6 +682,7 @@ async function init() {
         closeCatSelect.onclick = () => {
             const modal = document.getElementById('category-select-modal');
             if (modal) modal.classList.add('hidden');
+            _page2SeasonFlow = false;
         };
     }
     const catSelectBackdrop = document.getElementById('category-select-backdrop');
@@ -408,6 +690,17 @@ async function init() {
         catSelectBackdrop.onclick = () => {
             const modal = document.getElementById('category-select-modal');
             if (modal) modal.classList.add('hidden');
+            _page2SeasonFlow = false;
+        };
+    }
+    // ── CATSEL BACK BUTTON → kembali ke season modal ──
+    const catselBackBtn = document.getElementById('catsel-back-btn');
+    if (catselBackBtn) {
+        catselBackBtn.onclick = () => {
+            const catModal = document.getElementById('category-select-modal');
+            if (catModal) catModal.classList.add('hidden');
+            _page2SeasonFlow = true;
+            openSeasonChangeModal();
         };
     }
 
@@ -416,6 +709,7 @@ async function init() {
         closeSeasonChange.onclick = () => {
             const modal = document.getElementById('season-change-modal');
             if (modal) modal.classList.add('hidden');
+            _page2SeasonFlow = false;
         };
     }
     const seasonChangeBackdrop = document.getElementById('season-change-backdrop');
@@ -423,6 +717,7 @@ async function init() {
         seasonChangeBackdrop.onclick = () => {
             const modal = document.getElementById('season-change-modal');
             if (modal) modal.classList.add('hidden');
+            _page2SeasonFlow = false;
         };
     }
 
@@ -550,6 +845,21 @@ async function init() {
         const popup = document.getElementById('costume-popup');
         if (popup) popup.classList.add('hidden');
     };
+
+    // ── AWAKENING POPUP CLOSE ──
+    const closeAwakeningPopup = document.getElementById('close-awakening-popup');
+    if (closeAwakeningPopup) closeAwakeningPopup.onclick = () => {
+        const popup = document.getElementById('awakening-popup');
+        if (popup) popup.classList.add('hidden');
+    };
+    const awakeningPopupBackdrop = document.getElementById('awakening-popup-backdrop');
+    if (awakeningPopupBackdrop) awakeningPopupBackdrop.onclick = () => {
+        const popup = document.getElementById('awakening-popup');
+        if (popup) popup.classList.add('hidden');
+    };
+
+    // ── PAGE 2 PARTICLES ──
+    initPage2Particles();
 
     // ── SEASON APPEARANCES BUTTON (PAGE 4) ──
     // (onclick di-set ulang setiap showLegendDetail dipanggil)
@@ -687,6 +997,7 @@ function selectRealm(cat, show = true) {
     currentCat = cat;
     localStorage.setItem('currentCat', cat);
     document.body.className = `theme-${cat.toLowerCase()}`;
+    _page2SeasonFlow = false; // reset flow flag
 
     // Title: "S1 · CHARACTER"
     const titleEl = document.getElementById('category-title');
@@ -877,6 +1188,20 @@ function showLegendDetail(name) {
         } else {
             costumeBtn.classList.add('hidden');
             costumeBtn.onclick = null;
+        }
+    }
+
+    // ── Set up Awakening Button ──
+    // Hanya muncul jika AWAKENING_ENABLED = true DAN unit punya data awakening
+    const awakeningBtn = document.getElementById('awakening-btn');
+    const hasAwakening = AWAKENING_ENABLED && unit.awakening && unit.awakening.image;
+    if (awakeningBtn) {
+        if (hasAwakening) {
+            awakeningBtn.classList.remove('hidden');
+            awakeningBtn.onclick = () => showAwakeningPopup(unit);
+        } else {
+            awakeningBtn.classList.add('hidden');
+            awakeningBtn.onclick = null;
         }
     }
 }
