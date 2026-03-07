@@ -16,7 +16,7 @@
     #page-2{overflow:hidden!important}
     #page-2 .hero-section{overflow:hidden!important;height:100vh}
     /* Mobile: raise content higher */
-    #page-2 .cat-page-inner{display:flex;flex-direction:column;align-items:center;justify-content:flex-start;height:100%;padding:0 16px;padding-top:clamp(60px,12vh,110px);position:relative;overflow:hidden}
+    #page-2 .cat-page-inner{display:flex;flex-direction:column;align-items:center;justify-content:flex-start;height:100%;padding:0 16px;padding-top:clamp(60px,12vh,110px);position:relative;overflow:visible}
     #page-2 .cancel-btn-new{display:none!important}
 
     /* ── PAGE 2 CENTERED LAYOUT ── */
@@ -27,10 +27,13 @@
     .p2-crown-gem{font-size:1.8rem;color:#FF6B9D;animation:p2GemPulse 2.8s ease-in-out infinite alternate}
     @keyframes p2GemPulse{0%{opacity:.65;transform:scale(.95)}100%{opacity:1;transform:scale(1.1)}}
 
-    /* Season label: NO box, NO glow — pure gradient text */
-    .p2-season-big{font-family:'Orbitron',sans-serif!important;font-size:clamp(2.6rem,11vw,5rem)!important;font-weight:900!important;background:linear-gradient(135deg,#fff 0%,#FFB7D5 40%,#FF6B9D 65%,#C9B1FF 100%)!important;-webkit-background-clip:text!important;background-clip:text!important;-webkit-text-fill-color:transparent!important;line-height:1!important;letter-spacing:.08em!important;text-align:center!important}
+    /* Season label: NO box, NO glow — pure gradient text, no clip */
+    .p2-season-big{font-family:'Orbitron',sans-serif!important;font-size:clamp(2.4rem,9vw,3.8rem)!important;font-weight:900!important;background:linear-gradient(135deg,#fff 0%,#FFB7D5 40%,#FF6B9D 65%,#C9B1FF 100%)!important;-webkit-background-clip:text!important;background-clip:text!important;-webkit-text-fill-color:transparent!important;line-height:1.05!important;letter-spacing:.06em!important;text-align:center!important;word-break:keep-all!important;overflow:visible!important}
 
-    .p2-tagline{font-family:'Orbitron',sans-serif;font-size:.55rem;letter-spacing:.28em;color:rgba(200,180,255,.5);text-transform:uppercase;margin-top:-6px}
+    /* Subtitle text below season name */
+    .p2-subtitle-text{font-family:'Exo 2',sans-serif;font-size:.7rem;color:rgba(200,180,230,.65);text-align:center;letter-spacing:.05em;line-height:1.5;max-width:320px;margin:0 auto;font-style:italic}
+
+    .p2-tagline{font-family:'Orbitron',sans-serif;font-size:.55rem;letter-spacing:.28em;color:rgba(200,180,255,.5);text-transform:uppercase;margin-top:0}
 
     /* Dual buttons — sakura palette to match page 1, NO box-shadow glow */
     .p2-dual-btns{display:flex;gap:14px;width:100%;justify-content:center}
@@ -148,6 +151,7 @@
 
                     <!-- Big Season Label (no box) -->
                     <div class="p2-season-big" id="cat-season-label">SEASON 1</div>
+                    <p class="p2-subtitle-text">Legends never fade — they just wait to be rediscovered.</p>
                     <div class="p2-tagline">✧ CHOOSE YOUR PATH ✧</div>
 
                     <!-- 2 Action Buttons -->
@@ -195,7 +199,7 @@
                     <div class="p2-title-wrap">
                         <h2 id="category-title">ARCHIVE</h2>
                     </div>
-                    <button id="p3-season-btn" class="p2-realm-btn" title="Change Season" style="margin-right:4px"><i class="fas fa-layer-group"></i></button>
+                    <button id="p3-season-btn" class="p2-realm-btn" title="Change Season" style="margin-right:4px"><i class="fas fa-scroll"></i></button>
                     <button id="quick-change-btn" class="p2-realm-btn" title="Change Category">
                         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
                     </button>

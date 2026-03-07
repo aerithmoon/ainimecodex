@@ -282,6 +282,11 @@ function updateSeasonLabels() {
     if (label) label.innerText = `SEASON ${currentSeason}`;
     const p2num = document.getElementById('p2-season-num-display');
     if (p2num) p2num.innerText = `S${currentSeason}`;
+    // Also update page-3 category title so season reflects immediately
+    const titleEl = document.getElementById('category-title');
+    if (titleEl && currentCat) {
+        titleEl.innerText = `S${currentSeason} · ${currentCat.toUpperCase()}`;
+    }
 }
 
 function openSeasonSelectModal() {
