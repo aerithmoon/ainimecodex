@@ -521,7 +521,11 @@ async function init() {
     const closePatchBtn = document.getElementById('close-patch');
     if (closePatchBtn) closePatchBtn.onclick = () => UI.patchModal.classList.add('hidden');
     const closeViewerBtn = document.querySelector('.close-viewer');
-    if (closeViewerBtn) closeViewerBtn.onclick = () => UI.viewer.classList.add('hidden');
+    if (closeViewerBtn) closeViewerBtn.onclick = () => {
+        UI.viewer.classList.add('hidden');
+        const viewerLabel = document.getElementById('viewer-label');
+        if (viewerLabel) viewerLabel.style.display = 'none';
+    };
 
     // ── SEASON POPUP CLOSE ──
     const closeSeasonPopup = document.getElementById('close-season-popup');
@@ -906,17 +910,54 @@ function showCostumePopup(unit) {
         if (!unit.costumes || unit.costumes.length === 0) {
             listEl.innerHTML = `<p style="opacity:.5;font-size:.75rem;letter-spacing:.08em;">DATA COSTUME TIDAK TERSEDIA</p>`;
         } else {
-            listEl.innerHTML = unit.costumes.map(c => `
-                <div class="costume-chip">
+            listEl.innerHTML = unit.costumes.map((c, idx) => {
+                // Cek apakah image sudah diisi (bukan path kosong / dummy)
+                const hasImage = c.image && c.image.trim() !== '' && c.image.trim() !== 'data image/';
+                const clickAttr = hasImage
+                    ? `onclick="viewCostumeImage('${c.image.replace(/'/g, "\\'")}', '${(c.name || '').replace(/'/g, "\\'")}')"`
+                    : '';
+                const chipClass = hasImage ? 'costume-chip costume-chip-clickable' : 'costume-chip costume-chip-no-img';
+                return `
+                <div class="${chipClass}" ${clickAttr}>
                     <i class="fas fa-shirt"></i>
-                    <span>${c.name || 'Unknown Costume'}</span>
-                </div>
-            `).join('');
+                    <span class="costume-chip-name">${c.name || 'Unknown Costume'}</span>
+                    ${hasImage
+                        ? `<i class="fas fa-eye costume-chip-eye"></i>`
+                        : `<span class="costume-chip-soon">SOON</span>`
+                    }
+                </div>`;
+            }).join('');
         }
     }
 
     const popup = document.getElementById('costume-popup');
     if (popup) popup.classList.remove('hidden');
+}
+
+/* ═══════════════════════════════════════════════
+   VIEW COSTUME IMAGE — buka gambar costume di viewer
+═══════════════════════════════════════════════ */
+function viewCostumeImage(imgSrc, costumeName) {
+    // Tutup costume popup dulu
+    const popup = document.getElementById('costume-popup');
+    if (popup) popup.classList.add('hidden');
+
+    // Set judul viewer (pakai element yang ada atau buat overlay label)
+    const viewerImg = document.getElementById('viewer-img');
+    if (viewerImg) {
+        viewerImg.src = imgSrc;
+        viewerImg.alt = costumeName || 'Costume';
+    }
+
+    // Set label nama costume di atas viewer kalau ada element-nya
+    const viewerLabel = document.getElementById('viewer-label');
+    if (viewerLabel) {
+        viewerLabel.innerText = costumeName || '';
+        viewerLabel.style.display = 'block';
+    }
+
+    const viewer = document.getElementById('image-viewer');
+    if (viewer) viewer.classList.remove('hidden');
 }
 
 /* ═══════════════════════════════════════════════
