@@ -12,31 +12,32 @@
     /* ── PAGE 1 ── */
     #page-1{overflow:hidden!important}
 
-    /* ── PAGE 2 SCROLL ── */
-    #page-2{overflow-y:auto!important;overflow-x:hidden!important;position:relative}
-    #page-2 .hero-section{overflow:visible!important;min-height:100vh}
+    /* ── PAGE 2 SCROLL — NO SCROLL MOBILE ── */
+    #page-2{overflow:hidden!important;position:relative}
+    #page-2 .hero-section{overflow:hidden!important;height:100vh}
     #page-2 .cancel-btn-new{display:none!important}
 
-    /* ── PAGE 2 PORTAL WARP TRANSITION ── */
+    /* ── PAGE 2 PORTAL WARP TRANSITION — SMOOTH ── */
     @keyframes p2PortalWarp{
-        0%  { opacity:0; transform:scale(0) rotate(-8deg); filter:blur(18px) brightness(2.5); }
-        35% { opacity:.7; transform:scale(1.08) rotate(2deg); filter:blur(4px) brightness(1.4); }
-        65% { opacity:1; transform:scale(.97) rotate(-1deg); filter:blur(1px) brightness(1.1); }
-        100%{ opacity:1; transform:scale(1) rotate(0deg); filter:blur(0) brightness(1); }
+        0%  { opacity:0; transform:scale(.6); filter:blur(24px) brightness(2); }
+        40% { opacity:.85; transform:scale(1.03); filter:blur(3px) brightness(1.2); }
+        70% { opacity:1; transform:scale(.99); filter:blur(.5px) brightness(1.05); }
+        100%{ opacity:1; transform:scale(1); filter:blur(0) brightness(1); }
     }
     @keyframes p2WarpRipple{
-        0%  { opacity:.8; transform:translate(-50%,-50%) scale(0); }
-        60% { opacity:.3; transform:translate(-50%,-50%) scale(2.5); }
-        100%{ opacity:0; transform:translate(-50%,-50%) scale(4); }
+        0%  { opacity:.6; transform:translate(-50%,-50%) scale(0); }
+        50% { opacity:.25; transform:translate(-50%,-50%) scale(2); }
+        100%{ opacity:0; transform:translate(-50%,-50%) scale(3.5); }
     }
-    #page-2.p2-animate{ animation:p2PortalWarp .6s cubic-bezier(.22,.68,0,1.1) forwards; }
+    #page-2.p2-animate{
+        animation:p2PortalWarp .7s cubic-bezier(.16,.84,.44,1) forwards;
+    }
     #page-2.p2-animate::before{
         content:'';position:fixed;top:50%;left:50%;
-        width:300px;height:300px;border-radius:50%;
-        background:radial-gradient(circle,rgba(160,100,255,.55) 0%,rgba(255,107,157,.3) 40%,transparent 70%);
-        transform:translate(-50%,-50%) scale(0);
-        animation:p2WarpRipple .6s ease-out forwards;
+        width:340px;height:340px;border-radius:50%;
+        background:radial-gradient(circle,rgba(160,100,255,.45) 0%,rgba(255,107,157,.25) 45%,transparent 68%);
         pointer-events:none;z-index:0;
+        animation:p2WarpRipple .7s ease-out forwards;
     }
 
     /* ── PAGE 2 LAYOUT — MOBILE: single col, centered ── */
@@ -82,8 +83,8 @@
 
     .p2-season-big{font-family:'Orbitron',sans-serif!important;font-size:clamp(2.6rem,10vw,4.2rem)!important;font-weight:900!important;background:linear-gradient(135deg,#fff 0%,#FFB7D5 40%,#FF6B9D 65%,#C9B1FF 100%)!important;-webkit-background-clip:text!important;background-clip:text!important;-webkit-text-fill-color:transparent!important;line-height:1.05!important;letter-spacing:.06em!important;text-align:center!important;word-break:keep-all!important;overflow:visible!important}
 
-    .p2-subtitle-text{font-family:'Exo 2',sans-serif;font-size:.72rem;color:rgba(200,180,230,.65);text-align:center;letter-spacing:.05em;line-height:1.5;max-width:340px;margin:0 auto;font-style:italic}
-    .p2-tagline{font-family:'Orbitron',sans-serif;font-size:.55rem;letter-spacing:.28em;color:rgba(200,180,255,.5);text-transform:uppercase}
+    .p2-subtitle-text{font-family:'Exo 2',sans-serif;font-size:.72rem;color:rgba(225,210,255,.85);text-align:center;letter-spacing:.05em;line-height:1.5;max-width:340px;margin:0 auto;font-style:italic}
+    .p2-tagline{font-family:'Orbitron',sans-serif;font-size:.55rem;letter-spacing:.28em;color:rgba(210,185,255,.75);text-transform:uppercase}
 
     .p2-dual-btns{display:flex;gap:14px;width:100%;justify-content:center}
     .p2-action-btn{flex:1;max-width:160px;display:flex;flex-direction:column;align-items:center;gap:7px;padding:24px 12px 20px;border-radius:20px;cursor:pointer;transition:all .28s ease;position:relative;overflow:hidden}
@@ -95,11 +96,12 @@
     .p2-btn-season i{color:rgba(201,177,255,.95)}
     .p2-btn-cat i{color:rgba(255,183,213,.95)}
     .p2-btn-name{font-family:'Orbitron',sans-serif;font-size:.62rem;font-weight:800;letter-spacing:.18em}
-    .p2-btn-sub{font-family:'Orbitron',sans-serif;font-size:.55rem;opacity:.5;letter-spacing:.1em}
+    .p2-btn-sub{font-family:'Orbitron',sans-serif;font-size:.55rem;opacity:.65;letter-spacing:.1em}
 
-    .p2-home-btn{display:flex;align-items:center;gap:7px;background:transparent;border:1px solid rgba(255,255,255,.18);border-radius:50px;padding:10px 28px;color:rgba(255,255,255,.6);font-family:'Orbitron',sans-serif;font-size:.6rem;font-weight:700;letter-spacing:.2em;cursor:pointer;transition:all .22s ease;text-transform:uppercase;align-self:center}
-    .p2-home-btn i{font-size:.75rem}
-    .p2-home-btn:hover{background:rgba(255,255,255,.08);border-color:rgba(255,255,255,.4);color:rgba(255,255,255,.9)}
+    /* HOME button — gradient border & colored text */
+    .p2-home-btn{display:flex;align-items:center;gap:7px;background:rgba(155,93,229,.12);border:1.5px solid rgba(180,130,255,.45);border-radius:50px;padding:10px 28px;color:rgba(210,180,255,.9);font-family:'Orbitron',sans-serif;font-size:.6rem;font-weight:700;letter-spacing:.2em;cursor:pointer;transition:all .22s ease;text-transform:uppercase;align-self:center}
+    .p2-home-btn i{font-size:.75rem;color:rgba(255,150,200,.85)}
+    .p2-home-btn:hover{background:rgba(155,93,229,.28);border-color:rgba(200,150,255,.8);color:#fff}
 
     .p2-rune-strip{display:flex;gap:14px;align-items:center}
     .p2-rune{font-size:.88rem;color:rgba(200,170,255,.3);animation:p2RuneFloat 3s ease-in-out infinite alternate}
@@ -192,27 +194,27 @@
     /* ── PAGE 2 STATS ROW ── */
     .p2-stats-row{display:flex;align-items:center;justify-content:center;gap:8px;margin:10px 0 8px;width:100%}
     .p2-stat{display:flex;flex-direction:column;align-items:center;gap:2px}
-    .p2-stat-val{font-family:'Orbitron',sans-serif;font-size:1.4rem;font-weight:900;color:rgba(210,180,255,.95);line-height:1;transition:all .3s ease}
-    .p2-stat-label{font-family:'Orbitron',sans-serif;font-size:.45rem;letter-spacing:.18em;color:rgba(180,150,230,.55);text-transform:uppercase}
-    .p2-stat-divider{font-size:.7rem;color:rgba(180,140,255,.35);align-self:center;padding:0 4px}
+    .p2-stat-val{font-family:'Orbitron',sans-serif;font-size:1.4rem;font-weight:900;color:rgba(220,195,255,.98);line-height:1;transition:all .3s ease}
+    .p2-stat-label{font-family:'Orbitron',sans-serif;font-size:.46rem;letter-spacing:.18em;color:rgba(200,175,240,.75);text-transform:uppercase}
+    .p2-stat-divider{font-size:.7rem;color:rgba(180,140,255,.5);align-self:center;padding:0 4px}
 
     /* ── PAGE 2 QUOTE BOX ── */
-    .p2-quote-box{display:flex;flex-direction:column;align-items:center;gap:4px;background:rgba(120,60,200,.1);border:1px solid rgba(160,100,255,.2);border-radius:10px;padding:10px 16px;margin:6px 0;width:100%;max-width:360px;position:relative}
-    .p2-quote-icon{font-size:1.4rem;color:rgba(180,130,255,.4);line-height:1;align-self:flex-start;margin-bottom:2px}
-    .p2-quote-text{font-family:'Exo 2',sans-serif;font-size:.72rem;font-style:italic;color:rgba(220,200,255,.8);text-align:center;line-height:1.5;margin:0}
-    .p2-quote-source{font-family:'Orbitron',sans-serif;font-size:.55rem;letter-spacing:.15em;color:rgba(180,140,255,.55);margin:0;align-self:flex-end}
+    .p2-quote-box{display:flex;flex-direction:column;align-items:center;gap:4px;background:rgba(120,60,200,.12);border:1px solid rgba(160,100,255,.25);border-radius:10px;padding:10px 16px;margin:6px 0;width:100%;max-width:360px;position:relative}
+    .p2-quote-icon{font-size:1.4rem;color:rgba(200,155,255,.55);line-height:1;align-self:flex-start;margin-bottom:2px}
+    .p2-quote-text{font-family:'Exo 2',sans-serif;font-size:.74rem;font-style:italic;color:rgba(235,220,255,.92);text-align:center;line-height:1.55;margin:0}
+    .p2-quote-source{font-family:'Orbitron',sans-serif;font-size:.57rem;letter-spacing:.15em;color:rgba(210,175,255,.8);margin:0;align-self:flex-end}
 
     /* ── PAGE 2 SPOTLIGHT ── */
-    .p2-spotlight{display:flex;flex-direction:column;align-items:center;gap:6px;background:rgba(100,50,180,.12);border:1px solid rgba(160,100,255,.28);border-radius:12px;padding:10px 14px;margin:6px 0;width:100%;max-width:360px;cursor:pointer;transition:all .2s ease}
-    .p2-spotlight:hover{background:rgba(100,50,180,.22);border-color:rgba(160,100,255,.55);transform:translateY(-2px)}
-    .p2-spotlight-label{font-family:'Orbitron',sans-serif;font-size:.5rem;letter-spacing:.22em;color:rgba(200,160,255,.5);text-align:center}
+    .p2-spotlight{display:flex;flex-direction:column;align-items:center;gap:6px;background:rgba(100,50,180,.14);border:1px solid rgba(160,100,255,.32);border-radius:12px;padding:10px 14px;margin:6px 0;width:100%;max-width:360px;cursor:pointer;transition:all .2s ease}
+    .p2-spotlight:hover{background:rgba(100,50,180,.24);border-color:rgba(160,100,255,.6);transform:translateY(-2px)}
+    .p2-spotlight-label{font-family:'Orbitron',sans-serif;font-size:.5rem;letter-spacing:.22em;color:rgba(215,180,255,.7);text-align:center}
     .p2-spotlight-inner{display:flex;align-items:center;gap:12px;width:100%}
     .p2-spotlight-img{width:50px;height:68px;object-fit:cover;border-radius:8px;border:1.5px solid rgba(160,100,255,.4);flex-shrink:0}
     .p2-spotlight-info{display:flex;flex-direction:column;gap:3px;flex:1;min-width:0}
     .p2-spotlight-badge{width:28px;height:22px;display:flex;align-items:center;justify-content:center;font-family:'Orbitron',sans-serif;font-size:.65rem;font-weight:900;border-radius:4px}
-    .p2-spotlight-name{font-family:'Orbitron',sans-serif;font-size:.7rem;font-weight:800;color:rgba(230,210,255,.95);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-    .p2-spotlight-cat{font-family:'Orbitron',sans-serif;font-size:.52rem;letter-spacing:.12em;color:rgba(180,150,230,.55)}
-    .p2-spotlight-hint{font-family:'Orbitron',sans-serif;font-size:.48rem;letter-spacing:.15em;color:rgba(160,120,220,.4);margin-top:2px}
+    .p2-spotlight-name{font-family:'Orbitron',sans-serif;font-size:.72rem;font-weight:800;color:rgba(240,225,255,.98);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .p2-spotlight-cat{font-family:'Orbitron',sans-serif;font-size:.53rem;letter-spacing:.12em;color:rgba(200,170,240,.75)}
+    .p2-spotlight-hint{font-family:'Orbitron',sans-serif;font-size:.49rem;letter-spacing:.15em;color:rgba(190,155,255,.6);margin-top:2px}
 
     /* ── CATSEL BACK + CANCEL ROW ── */
     .catsel-btn-row{display:flex;gap:10px;justify-content:center;margin-top:4px}

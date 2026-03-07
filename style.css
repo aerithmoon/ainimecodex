@@ -1482,9 +1482,31 @@ body {
 
 .modal-content h3 { font-family: 'Cinzel', serif; color: var(--accent-clr); margin-bottom: 15px; font-size: 1.1rem; }
 
-.mini-cat-list { display: grid; grid-template-columns: 1fr; gap: 10px; margin: 15px 0; }
-.m-cat { background: rgba(255,255,255,0.05); padding: 12px; border-radius: 8px; cursor: pointer; font-size: 0.75rem; font-family: 'Orbitron', sans-serif; transition: var(--transition); border: 1px solid var(--border-clr); }
-.m-cat:hover { background: var(--accent-clr); color: white; border-color: var(--accent-clr); transform: translateX(5px); }
+.mini-cat-list { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 15px 0; }
+.m-cat {
+    display: flex; align-items: center; gap: 10px;
+    background: rgba(255,255,255,.04);
+    padding: 12px 14px; border-radius: 12px; cursor: pointer;
+    font-family: 'Orbitron', sans-serif;
+    transition: all .2s ease;
+    border: 1.5px solid rgba(255,255,255,.1);
+    color: #fff;
+}
+.m-cat:hover {
+    background: rgba(var(--mclr, 156,111,228), .18);
+    border-color: var(--mclr, #9C6FE4);
+    transform: translateY(-2px);
+}
+.m-cat-icon {
+    width: 32px; height: 32px; border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    background: rgba(255,255,255,.07);
+    color: var(--mclr, #9C6FE4);
+    font-size: .9rem; flex-shrink: 0;
+    border: 1px solid color-mix(in srgb, var(--mclr, #9C6FE4) 40%, transparent);
+}
+.m-cat:hover .m-cat-icon { background: color-mix(in srgb, var(--mclr, #9C6FE4) 22%, transparent); }
+.m-cat-name { font-size: .6rem; font-weight: 800; letter-spacing: .14em; }
 
 [data-theme="light"] .m-cat {
     background: rgba(0, 0, 0, 0.05);

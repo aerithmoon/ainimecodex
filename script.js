@@ -74,11 +74,11 @@ const UI = {
             const p2el = document.getElementById('page-2');
             if (p2el) {
                 p2el.classList.remove('p2-animate');
-                void p2el.offsetWidth; // reflow
+                void p2el.offsetWidth;
                 p2el.classList.add('p2-animate');
             }
-            renderPage2Content();
-            // Auto-open season modal HANYA jika fresh entry dari home
+            // seasonChanged=true hanya jika fresh entry (season popup akan muncul & season mungkin ganti)
+            renderPage2Content(_p2EntryFresh);
             if (_p2EntryFresh) {
                 setTimeout(() => {
                     _page2SeasonFlow = true;
@@ -315,8 +315,8 @@ function selectSeasonPage2Flow(season) {
     const chgModal = document.getElementById('season-change-modal');
     if (chgModal) chgModal.classList.add('hidden');
 
-    // Update page 2 content dengan season baru
-    renderPage2Content();
+    // Update page 2 content dengan season baru (seasonChanged = true → re-randomize spotlight)
+    renderPage2Content(true);
 
     // Buka category modal setelah delay kecil (smooth transition)
     setTimeout(() => {
@@ -368,10 +368,17 @@ function openSeasonChangeModal() {
 /* ═══════════════════════════════════════════════
    PAGE 2 — RENDER ALL CONTENT
 ═══════════════════════════════════════════════ */
-function renderPage2Content() {
+function renderPage2Content(seasonChanged = false) {
     renderPage2Stats();
     renderPage2Quote();
-    renderPage2Spotlight();
+    // Spotlight hanya di-randomize ulang kalau season berubah atau belum pernah diset
+    if (seasonChanged || !window._p2SpotlightUnit) {
+        renderPage2Spotlight();
+    } else {
+        // Tampilkan kembali spotlight yang sudah ada tanpa re-randomize
+        const spotEl = document.getElementById('p2-spotlight');
+        if (spotEl && window._p2SpotlightUnit) spotEl.classList.remove('hidden');
+    }
 }
 
 function renderPage2Stats() {
@@ -792,6 +799,14 @@ async function init() {
     }
 
     // ── QUICK CHANGE CATEGORY (PAGE 3) ──
+    const CAT_META = {
+        Character: { clr:'#FF5252', icon:'fa-shield-halved' },
+        Monster:   { clr:'#9C6FE4', icon:'fa-dragon' },
+        Pet:       { clr:'#FF4DB8', icon:'fa-paw' },
+        Item:      { clr:'#4CAF50', icon:'fa-gem' },
+        Magic:     { clr:'#5B86E5', icon:'fa-wand-sparkles' },
+        Area:      { clr:'#E8B84B', icon:'fa-map-location-dot' }
+    };
     const quickBtn = document.getElementById('quick-change-btn');
     if (quickBtn) {
         quickBtn.onclick = () => {
@@ -799,8 +814,10 @@ async function init() {
             if (!modalList) return;
             modalList.innerHTML = CONFIG.categories
                 .filter(c => c !== currentCat)
-                .map(c => `<div class="m-cat" onclick="selectRealm('${c}')">${c}</div>`)
-                .join('');
+                .map(c => {
+                    const m = CAT_META[c] || { clr:"#9C6FE4", icon:"fa-star" };
+                    return `<div class="m-cat" style="--mclr:${m.clr}" onclick="selectRealm('${c}')"><span class="m-cat-icon"><i class="fas ${m.icon}"></i></span><span class="m-cat-name">${c.toUpperCase()}</span></div>`;
+                }).join('');
             if (UI.modal) UI.modal.classList.remove('hidden');
         };
     }
