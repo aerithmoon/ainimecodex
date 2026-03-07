@@ -2681,6 +2681,13 @@ img {
 .detail-nav-static {
     padding: 0 4px !important;
 }
+/* Mobile page 4 nav: nudge back btn right, home btn left */
+.back-to-2.nav-btn-circle {
+    margin-left: 18px !important;
+}
+.back-to-1.nav-btn-circle {
+    margin-right: 18px !important;
+}
 
 @media (min-width: 1024px) {
     .detail-nav-static {
@@ -2689,11 +2696,11 @@ img {
     }
     /* Back button (panah kiri) geser lebih ke kanan */
     .back-to-2.nav-btn-circle {
-        margin-left: 60px !important;
+        margin-left: 100px !important;
     }
     /* Home button geser lebih ke kiri */
     .back-to-1.nav-btn-circle {
-        margin-right: 60px !important;
+        margin-right: 100px !important;
     }
 }
 

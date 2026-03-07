@@ -15,25 +15,22 @@
     /* ── PAGE 2: no scroll ── */
     #page-2{overflow:hidden!important}
     #page-2 .hero-section{overflow:hidden!important;height:100vh}
-    #page-2 .cat-page-inner{display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;padding:16px;position:relative;overflow:hidden}
+    /* Mobile: raise content toward top-center */
+    #page-2 .cat-page-inner{display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;padding:0 16px;padding-top:clamp(40px,8vh,80px);position:relative;overflow:hidden}
     #page-2 .cancel-btn-new{display:none!important}
 
-    /* ── PAGE 2 NEW CENTERED LAYOUT ── */
-    .p2-back-abs{position:absolute!important;top:16px!important;left:16px!important;background:rgba(255,255,255,.08)!important;border:1px solid rgba(255,255,255,.18)!important;border-radius:50%!important;width:40px!important;height:40px!important;display:flex!important;align-items:center!important;justify-content:center!important;color:#fff!important;cursor:pointer!important;font-size:.85rem!important;transition:background .2s!important;z-index:10!important;flex-shrink:0!important}
-    .p2-back-abs:hover{background:rgba(255,255,255,.18)!important}
-
-    .p2-center-block{display:flex;flex-direction:column;align-items:center;gap:18px;width:100%;max-width:420px;padding:0 12px}
+    /* ── PAGE 2 CENTERED LAYOUT ── */
+    .p2-center-block{display:flex;flex-direction:column;align-items:center;gap:16px;width:100%;max-width:420px;padding:0 12px;margin-top:-24px}
 
     .p2-crown{display:flex;align-items:center;gap:10px;opacity:.75}
     .p2-crown-star{font-size:1rem;color:rgba(200,170,255,.7)}
     .p2-crown-gem{font-size:1.8rem;color:var(--accent-clr,#FF6B9D);animation:p2GemPulse 2.5s ease-in-out infinite alternate}
     @keyframes p2GemPulse{0%{opacity:.6;transform:scale(.94);filter:drop-shadow(0 0 4px rgba(var(--accent-rgb,255,107,157),.4))}100%{opacity:1;transform:scale(1.08);filter:drop-shadow(0 0 14px rgba(var(--accent-rgb,255,107,157),.8))}}
 
-    .p2-season-frame{position:relative;padding:18px 36px;border:1.5px solid rgba(var(--accent-rgb,255,107,157),.35);border-radius:20px;background:rgba(var(--accent-rgb,255,107,157),.06);text-align:center;backdrop-filter:blur(10px)}
-    .p2-season-frame::before{content:'';position:absolute;inset:-1px;border-radius:20px;background:linear-gradient(135deg,rgba(var(--accent-rgb,255,107,157),.25),transparent 55%,rgba(var(--accent-rgb,255,107,157),.12));pointer-events:none}
-    .p2-season-big{font-family:'Orbitron',sans-serif!important;font-size:clamp(2.2rem,9vw,4rem)!important;font-weight:900!important;background:linear-gradient(135deg,#fff 0%,rgba(var(--accent-rgb,255,107,157),1) 50%,#C9B1FF 100%)!important;-webkit-background-clip:text!important;background-clip:text!important;-webkit-text-fill-color:transparent!important;filter:drop-shadow(0 0 18px rgba(var(--accent-rgb,255,107,157),.5))!important;line-height:1!important;letter-spacing:.08em!important}
+    /* Season label: NO box, plain gradient text only */
+    .p2-season-big{font-family:'Orbitron',sans-serif!important;font-size:clamp(2.4rem,10vw,4.5rem)!important;font-weight:900!important;background:linear-gradient(135deg,#fff 0%,rgba(var(--accent-rgb,255,107,157),1) 50%,#C9B1FF 100%)!important;-webkit-background-clip:text!important;background-clip:text!important;-webkit-text-fill-color:transparent!important;filter:drop-shadow(0 0 22px rgba(var(--accent-rgb,255,107,157),.55))!important;line-height:1!important;letter-spacing:.08em!important;text-align:center!important}
 
-    .p2-tagline{font-family:'Orbitron',sans-serif;font-size:.55rem;letter-spacing:.28em;color:rgba(200,180,255,.5);text-transform:uppercase;margin-top:-6px}
+    .p2-tagline{font-family:'Orbitron',sans-serif;font-size:.55rem;letter-spacing:.28em;color:rgba(200,180,255,.5);text-transform:uppercase;margin-top:-4px}
 
     .p2-dual-btns{display:flex;gap:14px;width:100%;justify-content:center}
     .p2-action-btn{flex:1;max-width:155px;display:flex;flex-direction:column;align-items:center;gap:7px;padding:22px 12px 18px;border-radius:20px;cursor:pointer;transition:all .28s ease;position:relative;overflow:hidden}
@@ -49,6 +46,11 @@
     .p2-btn-cat i{color:rgba(var(--accent-rgb,255,107,157),1)}
     .p2-btn-name{font-family:'Orbitron',sans-serif;font-size:.62rem;font-weight:800;letter-spacing:.18em}
     .p2-btn-sub{font-family:'Orbitron',sans-serif;font-size:.55rem;opacity:.5;letter-spacing:.1em}
+
+    /* HOME text button below dual btns */
+    .p2-home-btn{display:flex;align-items:center;gap:7px;background:transparent;border:1px solid rgba(255,255,255,.18);border-radius:50px;padding:9px 26px;color:rgba(255,255,255,.6);font-family:'Orbitron',sans-serif;font-size:.6rem;font-weight:700;letter-spacing:.2em;cursor:pointer;transition:all .22s ease;text-transform:uppercase}
+    .p2-home-btn i{font-size:.75rem}
+    .p2-home-btn:hover{background:rgba(255,255,255,.08);border-color:rgba(255,255,255,.4);color:rgba(255,255,255,.9)}
 
     .p2-rune-strip{display:flex;gap:14px;align-items:center;margin-top:2px}
     .p2-rune{font-size:.88rem;color:rgba(200,170,255,.35);animation:p2RuneFloat 3s ease-in-out infinite alternate}
@@ -66,11 +68,12 @@
     .detail-nav-static{transition:transform 0.45s cubic-bezier(0.165,0.84,0.44,1),opacity 0.45s ease!important}
     .detail-nav-static.nav-hidden{transform:translateY(-90px)!important;opacity:0!important;pointer-events:none!important}
 
-    /* ── PAGE 4 SEASON BUTTON: icon only ── */
+    /* ── PAGE 4 SEASON BUTTON: unified icon + label ── */
     .unit-season-section{margin-top:8px}
-    .season-appearances-btn{display:flex;align-items:center;justify-content:center;width:100%;padding:16px 20px;background:linear-gradient(135deg,rgba(140,80,255,.18),rgba(80,130,255,.18));border:1px solid rgba(160,120,255,.35);border-radius:12px;color:#fff;cursor:pointer;transition:all .2s ease}
+    .season-appearances-btn{display:flex;align-items:center;justify-content:center;gap:12px;width:100%;padding:16px 20px;background:linear-gradient(135deg,rgba(140,80,255,.18),rgba(80,130,255,.18));border:1px solid rgba(160,120,255,.35);border-radius:12px;color:#fff;cursor:pointer;transition:all .2s ease}
     .season-appearances-btn:hover{background:linear-gradient(135deg,rgba(140,80,255,.32),rgba(80,130,255,.32));border-color:rgba(160,120,255,.65);transform:translateY(-1px)}
-    .season-appearances-btn i{font-size:1.5rem;color:rgba(190,150,255,.9)}
+    .season-appearances-btn i{font-size:1.4rem;color:rgba(190,150,255,.9)}
+    .season-btn-label{font-family:'Orbitron',sans-serif;font-size:.72rem;font-weight:800;letter-spacing:.2em;color:rgba(210,180,255,.95)}
 
     /* ── SEASON SELECT POPUP (PAGE 1) ── */
     #season-select-modal .modal-content{max-width:420px;padding:28px 20px 20px;text-align:center}
@@ -137,9 +140,6 @@
                 <div class="circle-2"></div>
             </div>
             <div class="cat-page-inner">
-                <!-- Back button top-left -->
-                <button class="cat-page-back p2-back-abs back-to-1"><i class="fas fa-chevron-left"></i></button>
-
                 <div class="p2-center-block">
                     <!-- Crown ornament -->
                     <div class="p2-crown">
@@ -148,25 +148,29 @@
                         <span class="p2-crown-star">◈</span>
                     </div>
 
-                    <!-- Big Season Label -->
-                    <div class="p2-season-frame">
-                        <div class="p2-season-big" id="cat-season-label">SEASON 1</div>
-                    </div>
+                    <!-- Big Season Label (no box) -->
+                    <div class="p2-season-big" id="cat-season-label">SEASON 1</div>
                     <div class="p2-tagline">✧ CHOOSE YOUR PATH ✧</div>
 
                     <!-- 2 Action Buttons -->
                     <div class="p2-dual-btns">
                         <button id="p2-season-btn" class="p2-action-btn p2-btn-season">
-                            <i class="fas fa-layer-group"></i>
+                            <i class="fas fa-book-open"></i>
                             <span class="p2-btn-name">SEASON</span>
                             <span class="p2-btn-sub" id="p2-season-num-display">S1</span>
                         </button>
                         <button id="p2-category-btn" class="p2-action-btn p2-btn-cat">
-                            <i class="fas fa-compass"></i>
+                            <i class="fas fa-star"></i>
                             <span class="p2-btn-name">CATEGORY</span>
                             <span class="p2-btn-sub">SELECT</span>
                         </button>
                     </div>
+
+                    <!-- HOME text button -->
+                    <button class="p2-home-btn back-to-1">
+                        <i class="fas fa-house"></i>
+                        <span>HOME</span>
+                    </button>
 
                     <!-- Decorative rune strip -->
                     <div class="p2-rune-strip">
@@ -202,7 +206,7 @@
                 <div class="p2-search-row">
                     <div class="p2-search-box">
                         <i class="fas fa-magnifying-glass"></i>
-                        <input type="text" id="unit-search" placeholder="Cari legend...">
+                        <input type="text" id="unit-search" placeholder="Search legend...">
                     </div>
                     <button id="filter-btn" class="p2-filter-btn">
                         <i class="fas fa-sliders"></i>
@@ -257,11 +261,11 @@
                         <p id="detail-story">Ancient texts tell of a hero...</p>
                     </div>
                 </div>
-                <!-- SEASON SECTION — replaces old gallery -->
+                <!-- SEASON SECTION — single unified button -->
                 <div class="unit-gallery unit-season-section">
-                    <h4 class="gallery-title">SEASON</h4>
                     <button id="season-appearances-btn" class="season-appearances-btn">
-                        <i class="fas fa-layer-group"></i>
+                        <i class="fas fa-book-open"></i>
+                        <span class="season-btn-label">SEASON</span>
                     </button>
                 </div>
             </div>
@@ -272,8 +276,8 @@
     <div id="category-select-modal" class="rpg-modal hidden">
         <div class="modal-backdrop" id="category-select-backdrop"></div>
         <div class="modal-content catsel-content">
-            <h3>PILIH KATEGORI</h3>
-            <p class="season-select-subtitle">Pilih dunia yang ingin kamu jelajahi</p>
+            <h3>SELECT CATEGORY</h3>
+            <p class="season-select-subtitle">Choose the world you want to explore</p>
             <div class="catsel-grid">
                 <div class="cat-card" data-category="Character" style="--clr:#FF5252">
                     <div class="cat-icon"><i class="fas fa-shield-halved"></i></div>
@@ -300,7 +304,7 @@
                     <span class="cat-name">AREA</span>
                 </div>
             </div>
-            <button id="close-category-select" class="rpg-btn-small">BATAL</button>
+            <button id="close-category-select" class="rpg-btn-small">CANCEL</button>
         </div>
     </div>
 
@@ -308,10 +312,10 @@
     <div id="season-select-modal" class="rpg-modal hidden">
         <div class="modal-backdrop" id="season-select-backdrop"></div>
         <div class="modal-content" style="max-width:420px;padding:28px 20px 20px;text-align:center">
-            <h3>PILIH SEASON</h3>
-            <p class="season-select-subtitle" id="season-select-subtitle">Pilih season untuk memulai petualangan</p>
+            <h3>SELECT SEASON</h3>
+            <p class="season-select-subtitle" id="season-select-subtitle">Select a season to begin your adventure</p>
             <div id="season-select-grid" class="season-select-grid"></div>
-            <button id="close-season-select" class="rpg-btn-small">BATAL</button>
+            <button id="close-season-select" class="rpg-btn-small">CANCEL</button>
         </div>
     </div>
 
@@ -319,10 +323,10 @@
     <div id="season-change-modal" class="rpg-modal hidden">
         <div class="modal-backdrop" id="season-change-backdrop"></div>
         <div class="modal-content season-popup-content">
-            <h3>GANTI SEASON</h3>
-            <p class="season-popup-subtitle">Pilih season yang ingin ditampilkan</p>
+            <h3>CHANGE SEASON</h3>
+            <p class="season-popup-subtitle">Choose a season to display</p>
             <div id="season-change-list" class="season-popup-list"></div>
-            <button id="close-season-change" class="rpg-btn-small">TUTUP</button>
+            <button id="close-season-change" class="rpg-btn-small">CLOSE</button>
         </div>
     </div>
 
