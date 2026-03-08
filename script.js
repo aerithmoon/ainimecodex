@@ -883,11 +883,15 @@ async function init() {
         quickBtn.onclick = () => {
             const modalList = document.getElementById('mini-cat-list');
             if (!modalList) return;
+            // Render identik dengan cat-card di page 2
             modalList.innerHTML = CONFIG.categories
                 .filter(c => c !== currentCat)
                 .map(c => {
-                    const m = CAT_META[c] || { clr:"#9C6FE4", icon:"fa-star" };
-                    return `<div class="m-cat" style="--mclr:${m.clr}" onclick="selectRealm('${c}')"><span class="m-cat-icon"><i class="fas ${m.icon}"></i></span><span class="m-cat-name">${c.toUpperCase()}</span></div>`;
+                    const m = CAT_META[c] || { clr:'#9C6FE4', icon:'fa-star' };
+                    return `<div class="cat-card" data-category="${c}" style="--clr:${m.clr}" onclick="selectRealm('${c}')">
+                        <div class="cat-icon"><i class="fas ${m.icon}"></i></div>
+                        <span class="cat-name">${c.toUpperCase()}</span>
+                    </div>`;
                 }).join('');
             if (UI.modal) UI.modal.classList.remove('hidden');
         };
@@ -929,6 +933,8 @@ async function init() {
     // ── MODAL CLOSE BUTTONS ──
     const closeModalBtn = document.getElementById('close-modal');
     if (closeModalBtn) closeModalBtn.onclick = () => UI.modal.classList.add('hidden');
+    const categoryModalBackdrop = document.getElementById('category-modal-backdrop');
+    if (categoryModalBackdrop) categoryModalBackdrop.onclick = () => UI.modal.classList.add('hidden');
     const closePatchBtn = document.getElementById('close-patch');
     if (closePatchBtn) closePatchBtn.onclick = () => UI.patchModal.classList.add('hidden');
     const closeViewerBtn = document.querySelector('.close-viewer');

@@ -593,10 +593,13 @@
 
     <!-- MODALS -->
     <div id="category-modal" class="rpg-modal hidden">
-        <div class="modal-backdrop"></div>
-        <div class="modal-content">
+        <div class="modal-backdrop" id="category-modal-backdrop"></div>
+        <div class="modal-content catsel-content">
             <h3>SELECT REALM</h3>
-            <div id="mini-cat-list" class="mini-cat-list"></div>
+            <p class="season-select-subtitle">Choose the world you want to explore</p>
+            <div id="mini-cat-list" class="catsel-grid">
+                <!-- populated by JS -->
+            </div>
             <button id="close-modal" class="rpg-btn-small">CLOSE</button>
         </div>
     </div>
