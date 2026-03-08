@@ -355,11 +355,16 @@ function openSeasonChangeModal() {
             const clickFn = _page2SeasonFlow
                 ? `selectSeasonPage2Flow('${s}')`
                 : `selectSeason('${s}', true); if(document.getElementById('page-3').classList.contains('active')){renderArchive();}`;
-            return `<div class="season-chip ${String(s) === String(currentSeason) ? 'active' : ''}" style="--schip-clr:${clr}" onclick="${clickFn}">SEASON ${s}</div>`;
+            const isActive = String(s) === String(currentSeason) ? 'active' : '';
+            return `<div class="season-card ${isActive}" style="--schip-clr:${clr}" onclick="${clickFn}">
+                <span class="season-card-icon"><i class="fas fa-scroll"></i></span>
+                <span class="season-card-num">${s}</span>
+                <span class="season-card-lbl">SEASON</span>
+            </div>`;
         }).join('');
     }
     // Update modal title & subtitle based on context
-    const titleEl = document.querySelector('#season-change-modal h3');
+    const titleEl = document.getElementById('season-change-title');
     if (titleEl) titleEl.innerText = _page2SeasonFlow ? 'SELECT SEASON' : 'CHANGE SEASON';
     const modal = document.getElementById('season-change-modal');
     if (modal) modal.classList.remove('hidden');
