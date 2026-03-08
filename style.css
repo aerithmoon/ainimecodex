@@ -1483,6 +1483,8 @@ body {
 .modal-content h3 { font-family: 'Cinzel', serif; color: var(--accent-clr); margin-bottom: 15px; font-size: 1.1rem; }
 
 .mini-cat-list { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 15px 0; }
+/* Item terakhir jika sendirian (ganjil) → span 2 kolom agar rapi */
+.m-cat:last-child:nth-child(odd) { grid-column: 1 / -1; max-width: 50%; margin: 0 auto; width: 100%; }
 .m-cat {
     display: flex; align-items: center; gap: 10px;
     background: rgba(255,255,255,.04);
@@ -1493,7 +1495,7 @@ body {
     color: #fff;
 }
 .m-cat:hover {
-    background: rgba(var(--mclr, 156,111,228), .18);
+    background: color-mix(in srgb, var(--mclr, #9C6FE4) 18%, transparent);
     border-color: var(--mclr, #9C6FE4);
     transform: translateY(-2px);
 }
@@ -1506,6 +1508,12 @@ body {
     border: 1px solid color-mix(in srgb, var(--mclr, #9C6FE4) 40%, transparent);
 }
 .m-cat:hover .m-cat-icon { background: color-mix(in srgb, var(--mclr, #9C6FE4) 22%, transparent); }
+.m-cat-name { font-size: .6rem; font-weight: 800; letter-spacing: .14em; }
+
+[data-theme="light"] .m-cat {
+    background: rgba(0, 0, 0, 0.05);
+}
+
 .m-cat-name { font-size: .6rem; font-weight: 800; letter-spacing: .14em; }
 
 [data-theme="light"] .m-cat {

@@ -345,17 +345,17 @@ function openSeasonSelectModal() {
 }
 
 function openSeasonChangeModal() {
-    // For page 2 & 3 - change season button
+    const SEASON_COLORS = ['#FF5252','#FF8C42','#FFD166','#06D6A0','#4CC9F0','#9C6FE4','#FF4DB8','#E8B84B','#5B86E5','#FF6B9D'];
     const seasons = getAvailableSeasons();
     const fallback = seasons.length === 0 ? ['1'] : seasons;
     const listEl = document.getElementById('season-change-list');
     if (listEl) {
         listEl.innerHTML = fallback.map(s => {
-            // Page 2 flow: setelah pilih season → auto buka category modal
+            const clr = SEASON_COLORS[(Number(s) - 1) % SEASON_COLORS.length];
             const clickFn = _page2SeasonFlow
                 ? `selectSeasonPage2Flow('${s}')`
                 : `selectSeason('${s}', true); if(document.getElementById('page-3').classList.contains('active')){renderArchive();}`;
-            return `<div class="season-chip ${String(s) === String(currentSeason) ? 'active' : ''}" onclick="${clickFn}">SEASON ${s}</div>`;
+            return `<div class="season-chip ${String(s) === String(currentSeason) ? 'active' : ''}" style="--schip-clr:${clr}" onclick="${clickFn}">SEASON ${s}</div>`;
         }).join('');
     }
     // Update modal title & subtitle based on context
@@ -1285,9 +1285,16 @@ function showLegendDetail(name) {
     }
 
     // ── Set up Season Button ──
+    // Sembunyikan untuk kategori Item, Magic, Area (kumulatif — tidak relevan tampilkan per-season)
     const seasonBtn = document.getElementById('season-appearances-btn');
     if (seasonBtn) {
-        seasonBtn.onclick = () => showSeasonPopup(unit.name);
+        if (isCumulativeCat(unit.category)) {
+            seasonBtn.classList.add('hidden');
+            seasonBtn.onclick = null;
+        } else {
+            seasonBtn.classList.remove('hidden');
+            seasonBtn.onclick = () => showSeasonPopup(unit.name);
+        }
     }
 
     // ── Set up Costume Button ──
