@@ -48,8 +48,9 @@
     .p2-spotlight-wrap{ order:2; width:100%; max-width:420px; margin-bottom:7px; }
     .p2-btns-wrap{ order:3; width:100%; max-width:420px; margin-bottom:7px; }
     .p2-quote-wrap{ order:4; width:100%; max-width:420px; margin-bottom:0; }
-    /* footer (runes + home) hidden on mobile — home moved to fixed top-right */
-    .p2-footer-wrap{ order:5; display:none; }
+    /* footer: tampilkan tapi rune strip disembunyikan, home btn pakai fixed */
+    .p2-footer-wrap{ order:5; display:block; width:0; height:0; overflow:visible; }
+    .p2-footer-wrap .p2-rune-strip{ display:none; }
 
     /* HOME button: fixed top-right on mobile (page 2 only) */
     #page-2 .p2-home-btn{
