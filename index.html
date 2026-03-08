@@ -27,44 +27,61 @@
     }
 
     /* ── PAGE 2 LAYOUT ── */
+    /* ══ PAGE 2 LAYOUT ══ */
+
+    /* MOBILE BASE — single column, centered, pushed up */
     .p2-page-wrap{
         display:flex; flex-direction:column; align-items:center;
-        min-height:100vh; padding:clamp(32px,5vh,56px) 16px 24px;
-        position:relative; z-index:1; box-sizing:border-box; gap:10px;
+        min-height:100vh; padding:12px 16px 16px;
+        position:relative; z-index:1; box-sizing:border-box;
+        gap:0; justify-content:flex-start; padding-top:clamp(12px,3vh,32px);
     }
+    /* On mobile, col-left and col-right dissolve — children flow flat */
+    .p2-col-left{
+        display:contents;
+    }
+    .p2-col-right{
+        display:contents;
+    }
+    /* Mobile order: header→spotlight→btns→quote→footer */
+    .p2-header-block{ order:1; display:flex; flex-direction:column; align-items:center; gap:5px; width:100%; max-width:420px; margin-bottom:8px; }
+    .p2-spotlight-wrap{ order:2; width:100%; max-width:420px; margin-bottom:8px; }
+    .p2-btns-wrap{ order:3; width:100%; max-width:420px; margin-bottom:8px; }
+    .p2-quote-wrap{ order:4; width:100%; max-width:420px; margin-bottom:8px; }
+    .p2-footer-wrap{ order:5; display:flex; flex-direction:row; align-items:center; justify-content:center; gap:16px; width:100%; max-width:420px; }
 
-    /* ── MOBILE: flat single-col, controlled via order ── */
-    .p2-header-block{ order:1; display:flex; flex-direction:column; align-items:center; gap:6px; width:100%; max-width:420px; }
-    .p2-spotlight-wrap{ order:2; width:100%; max-width:420px; }
-    .p2-btns-wrap{ order:3; width:100%; max-width:420px; }
-    .p2-quote-wrap{ order:4; width:100%; max-width:420px; }
-    .p2-footer-wrap{ order:5; display:flex; flex-direction:column; align-items:center; gap:10px; width:100%; max-width:420px; }
-
-    /* ── DESKTOP: 2-col CSS grid ── */
+    /* DESKTOP — 2 real side-by-side flex columns */
     @media(min-width:1024px){
         #page-2{ overflow:hidden!important; }
         #page-2 .hero-section{ height:100vh; overflow:hidden!important; }
+
         .p2-page-wrap{
-            display:grid;
-            grid-template-columns: 1fr 1fr;
-            grid-template-rows: auto auto 1fr;
-            grid-template-areas:
-                "header  spotlight"
-                "quote   btns"
-                ".       footer";
-            gap:24px 72px;
+            flex-direction:row;
             align-items:center;
-            justify-items:stretch;
-            padding:0 100px;
+            justify-content:center;
+            gap:52px;
+            padding:0 80px;
             min-height:100vh;
         }
-        .p2-header-block{ grid-area:header; align-items:flex-start; max-width:none; gap:10px; }
-        .p2-spotlight-wrap{ grid-area:spotlight; max-width:none; }
-        .p2-btns-wrap{ grid-area:btns; max-width:none; }
-        .p2-quote-wrap{ grid-area:quote; max-width:none; }
-        .p2-footer-wrap{ grid-area:footer; align-items:flex-end; flex-direction:row; justify-content:space-between; max-width:none; }
+        /* Restore cols as real flex columns */
+        .p2-col-left{
+            display:flex; flex-direction:column;
+            align-items:flex-start; justify-content:center;
+            gap:14px; flex:1; min-width:0;
+        }
+        .p2-col-right{
+            display:flex; flex-direction:column;
+            align-items:stretch; justify-content:center;
+            gap:12px; flex:0 0 320px;
+        }
+        /* Reset mobile orders/margins */
+        .p2-header-block{ order:unset; width:100%; max-width:none; margin-bottom:0; align-items:flex-start; gap:8px; }
+        .p2-quote-wrap  { order:unset; width:100%; max-width:none; margin-bottom:0; }
+        .p2-spotlight-wrap{ order:unset; width:100%; max-width:none; margin-bottom:0; }
+        .p2-btns-wrap   { order:unset; width:100%; max-width:none; margin-bottom:0; }
+        .p2-footer-wrap { order:unset; width:100%; max-width:none; flex-direction:row; justify-content:space-between; align-items:center; }
 
-        /* Desktop: left-align text */
+        /* Left text alignment */
         .p2-header-block .p2-crown{ justify-content:flex-start; }
         .p2-header-block .p2-season-big{ text-align:left!important; }
         .p2-header-block .p2-subtitle-text{ text-align:left; margin:0; }
@@ -74,31 +91,30 @@
         .p2-quote-wrap .p2-quote-icon{ align-self:flex-start; }
         .p2-quote-wrap .p2-quote-text{ text-align:left; }
         .p2-quote-wrap .p2-quote-source{ align-self:flex-end; }
-        .p2-footer-wrap .p2-rune-strip{ order:1; }
-        .p2-footer-wrap .p2-home-btn{ order:2; }
 
-        /* Desktop: bigger everything */
-        .p2-season-big{ font-size:clamp(3.2rem,5vw,5rem)!important; }
-        .p2-subtitle-text{ font-size:.85rem; max-width:100%; }
-        .p2-tagline{ font-size:.65rem; letter-spacing:.32em; }
-        .p2-stat-val{ font-size:1.8rem; }
-        .p2-stat-label{ font-size:.55rem; }
-        .p2-stat-divider{ font-size:.9rem; }
-        .p2-quote-text{ font-size:.86rem; }
-        .p2-quote-source{ font-size:.68rem; }
-        .p2-spotlight{ padding:14px 18px; }
-        .p2-spotlight-img{ width:68px; height:90px; }
-        .p2-spotlight-name{ font-size:.85rem; }
-        .p2-spotlight-cat{ font-size:.63rem; }
-        .p2-spotlight-hint{ font-size:.58rem; }
-        .p2-action-btn{ max-width:200px; padding:28px 16px 24px; }
-        .p2-action-btn i{ font-size:2.4rem; }
-        .p2-btn-name{ font-size:.72rem; letter-spacing:.2em; }
-        .p2-btn-sub{ font-size:.6rem; }
-        .p2-home-btn{ padding:12px 36px; font-size:.7rem; }
-        .p2-rune{ font-size:1.1rem; }
-        .p2-crown-gem{ font-size:2.2rem; }
-        .p2-crown-star{ font-size:1.2rem; }
+        /* Desktop sizes — bigger */
+        .p2-season-big{ font-size:clamp(3rem,4.5vw,4.8rem)!important; }
+        .p2-subtitle-text{ font-size:.82rem; }
+        .p2-tagline{ font-size:.6rem; letter-spacing:.28em; }
+        .p2-stat-val{ font-size:1.7rem; }
+        .p2-stat-label{ font-size:.52rem; }
+        .p2-stat-divider{ font-size:.85rem; }
+        .p2-quote-text{ font-size:.82rem; line-height:1.6; }
+        .p2-quote-source{ font-size:.63rem; }
+        .p2-spotlight{ padding:14px 16px; }
+        .p2-spotlight-img{ width:64px; height:86px; }
+        .p2-spotlight-name{ font-size:.82rem; }
+        .p2-spotlight-cat{ font-size:.6rem; }
+        .p2-spotlight-hint{ font-size:.54rem; }
+        .p2-spotlight-label{ font-size:.54rem; }
+        .p2-action-btn{ padding:20px 12px 16px; max-width:none; }
+        .p2-action-btn i{ font-size:2rem; }
+        .p2-btn-name{ font-size:.66rem; letter-spacing:.18em; }
+        .p2-btn-sub{ font-size:.56rem; }
+        .p2-home-btn{ padding:10px 28px; font-size:.62rem; }
+        .p2-rune{ font-size:1rem; }
+        .p2-crown-gem{ font-size:2rem; }
+        .p2-crown-star{ font-size:1.1rem; }
     }
 
     /* legacy compat */
@@ -354,89 +370,87 @@
 
             <div class="p2-page-wrap">
 
-                <!-- ORDER 1 MOBILE / grid:header DESKTOP -->
-                <div class="p2-header-block">
-                    <div class="p2-crown">
-                        <span class="p2-crown-star">◈</span>
-                        <span class="p2-crown-gem">✦</span>
-                        <span class="p2-crown-star">◈</span>
-                    </div>
-                    <div class="p2-season-big" id="cat-season-label">SEASON 1</div>
-                    <p class="p2-subtitle-text">Legends never fade — they just wait to be rediscovered.</p>
-                    <div class="p2-tagline">✧ CHOOSE YOUR PATH ✧</div>
-                    <div class="p2-stats-row">
-                        <div class="p2-stat">
-                            <span class="p2-stat-val" id="p2-stat-units">0</span>
-                            <span class="p2-stat-label">UNITS</span>
+                <!-- LEFT COL: crown+season+stats+quote -->
+                <div class="p2-col-left">
+                    <div class="p2-header-block">
+                        <div class="p2-crown">
+                            <span class="p2-crown-star">◈</span>
+                            <span class="p2-crown-gem">✦</span>
+                            <span class="p2-crown-star">◈</span>
                         </div>
-                        <div class="p2-stat-divider">◈</div>
-                        <div class="p2-stat">
-                            <span class="p2-stat-val" id="p2-stat-srank">0</span>
-                            <span class="p2-stat-label">S-RANK</span>
-                        </div>
-                        <div class="p2-stat-divider">◈</div>
-                        <div class="p2-stat">
-                            <span class="p2-stat-val" id="p2-stat-cats">0</span>
-                            <span class="p2-stat-label">TYPES</span>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- ORDER 2 MOBILE / grid:spotlight DESKTOP -->
-                <div class="p2-spotlight-wrap">
-                    <div class="p2-spotlight hidden" id="p2-spotlight" onclick="p2SpotlightClick()">
-                        <div class="p2-spotlight-label">✦ FEATURED UNIT ✦</div>
-                        <div class="p2-spotlight-inner">
-                            <img class="p2-spotlight-img" id="p2-spotlight-img" src="" alt="">
-                            <div class="p2-spotlight-info">
-                                <div class="p2-spotlight-badge rarity-s" id="p2-spotlight-rarity">S</div>
-                                <div class="p2-spotlight-name" id="p2-spotlight-name">—</div>
-                                <div class="p2-spotlight-cat" id="p2-spotlight-cat">—</div>
-                                <div class="p2-spotlight-hint">TAP TO EXPLORE ›</div>
+                        <div class="p2-season-big" id="cat-season-label">SEASON 1</div>
+                        <p class="p2-subtitle-text">Legends never fade — they just wait to be rediscovered.</p>
+                        <div class="p2-tagline">✧ CHOOSE YOUR PATH ✧</div>
+                        <div class="p2-stats-row">
+                            <div class="p2-stat">
+                                <span class="p2-stat-val" id="p2-stat-units">0</span>
+                                <span class="p2-stat-label">UNITS</span>
+                            </div>
+                            <div class="p2-stat-divider">◈</div>
+                            <div class="p2-stat">
+                                <span class="p2-stat-val" id="p2-stat-srank">0</span>
+                                <span class="p2-stat-label">S-RANK</span>
+                            </div>
+                            <div class="p2-stat-divider">◈</div>
+                            <div class="p2-stat">
+                                <span class="p2-stat-val" id="p2-stat-cats">0</span>
+                                <span class="p2-stat-label">TYPES</span>
                             </div>
                         </div>
                     </div>
+                    <div class="p2-quote-wrap">
+                        <div class="p2-quote-box">
+                            <span class="p2-quote-icon">❝</span>
+                            <p class="p2-quote-text" id="p2-quote-text">Waiting for the legend to speak...</p>
+                            <p class="p2-quote-source" id="p2-quote-source">— Unknown</p>
+                        </div>
+                    </div>
                 </div>
 
-                <!-- ORDER 3 MOBILE / grid:btns DESKTOP -->
-                <div class="p2-btns-wrap">
-                    <div class="p2-dual-btns">
-                        <button id="p2-season-btn" class="p2-action-btn p2-btn-season">
-                            <i class="fas fa-scroll"></i>
-                            <span class="p2-btn-name">SEASON</span>
-                            <span class="p2-btn-sub" id="p2-season-num-display">S1</span>
+                <!-- RIGHT COL: spotlight+buttons+footer -->
+                <div class="p2-col-right">
+                    <div class="p2-spotlight-wrap">
+                        <div class="p2-spotlight hidden" id="p2-spotlight" onclick="p2SpotlightClick()">
+                            <div class="p2-spotlight-label">✦ FEATURED UNIT ✦</div>
+                            <div class="p2-spotlight-inner">
+                                <img class="p2-spotlight-img" id="p2-spotlight-img" src="" alt="">
+                                <div class="p2-spotlight-info">
+                                    <div class="p2-spotlight-badge rarity-s" id="p2-spotlight-rarity">S</div>
+                                    <div class="p2-spotlight-name" id="p2-spotlight-name">—</div>
+                                    <div class="p2-spotlight-cat" id="p2-spotlight-cat">—</div>
+                                    <div class="p2-spotlight-hint">TAP TO EXPLORE ›</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="p2-btns-wrap">
+                        <div class="p2-dual-btns">
+                            <button id="p2-season-btn" class="p2-action-btn p2-btn-season">
+                                <i class="fas fa-scroll"></i>
+                                <span class="p2-btn-name">SEASON</span>
+                                <span class="p2-btn-sub" id="p2-season-num-display">S1</span>
+                            </button>
+                            <button id="p2-category-btn" class="p2-action-btn p2-btn-cat">
+                                <i class="fas fa-wand-magic-sparkles"></i>
+                                <span class="p2-btn-name">CATEGORY</span>
+                                <span class="p2-btn-sub">SELECT</span>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="p2-footer-wrap">
+                        <div class="p2-rune-strip">
+                            <span class="p2-rune r1">✦</span>
+                            <span class="p2-rune r2">◈</span>
+                            <span class="p2-rune r3">✧</span>
+                            <span class="p2-rune r4">★</span>
+                            <span class="p2-rune r5">◆</span>
+                            <span class="p2-rune r6">✦</span>
+                        </div>
+                        <button class="p2-home-btn back-to-1">
+                            <i class="fas fa-house"></i>
+                            <span>HOME</span>
                         </button>
-                        <button id="p2-category-btn" class="p2-action-btn p2-btn-cat">
-                            <i class="fas fa-wand-magic-sparkles"></i>
-                            <span class="p2-btn-name">CATEGORY</span>
-                            <span class="p2-btn-sub">SELECT</span>
-                        </button>
                     </div>
-                </div>
-
-                <!-- ORDER 4 MOBILE / grid:quote DESKTOP -->
-                <div class="p2-quote-wrap">
-                    <div class="p2-quote-box">
-                        <span class="p2-quote-icon">❝</span>
-                        <p class="p2-quote-text" id="p2-quote-text">Waiting for the legend to speak...</p>
-                        <p class="p2-quote-source" id="p2-quote-source">— Unknown</p>
-                    </div>
-                </div>
-
-                <!-- ORDER 5 MOBILE / grid:footer DESKTOP -->
-                <div class="p2-footer-wrap">
-                    <div class="p2-rune-strip">
-                        <span class="p2-rune r1">✦</span>
-                        <span class="p2-rune r2">◈</span>
-                        <span class="p2-rune r3">✧</span>
-                        <span class="p2-rune r4">★</span>
-                        <span class="p2-rune r5">◆</span>
-                        <span class="p2-rune r6">✦</span>
-                    </div>
-                    <button class="p2-home-btn back-to-1">
-                        <i class="fas fa-house"></i>
-                        <span>HOME</span>
-                    </button>
                 </div>
 
             </div><!-- end p2-page-wrap -->
